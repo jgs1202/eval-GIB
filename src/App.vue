@@ -34,7 +34,7 @@ export default {
         svgWigth: 960,
         svgHeight: 600
       },
-      nodes: null,
+      nodes: [],
       choice: []
     }
   },
@@ -45,7 +45,7 @@ export default {
       if (error) throw error;
       that.graph = graph
       console.log("json")
-      // that.nodes = that.reNodes()
+      that.$set(that.nodes, that.reNodes())
       console.log('nodes init')
     })
   },
@@ -64,6 +64,7 @@ export default {
           .attr("r", 5)
         return d3.selectAll("circle")
           .each(function(d, i) {
+            console.log(i)
             var selection = d3.select(this)
             selection.transition()
               .attr('cx', that.graph.nodes[i].cx)
@@ -90,7 +91,7 @@ export default {
           })
         that.choice = []
         d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
-        that.nodes = that.reNodes()
+        that.$set(that.nodes, that.reNodes())
       } else {
         alert('Choose 2 boxes.')
       }
@@ -290,6 +291,9 @@ export default {
     //       });
     //   });
     // }
+  },
+  updated: function(){
+    console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
   }
 }
 </script>
