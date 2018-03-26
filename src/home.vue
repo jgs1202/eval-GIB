@@ -16,6 +16,8 @@ export default {
     return {
       currentPage: 'dataInput',
       userName: 'null',
+      gender: 'null',
+      age: null,
     }
   }
 }

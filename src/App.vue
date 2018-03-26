@@ -27,7 +27,7 @@ export default {
     return {
       graph: null,
       simulation: null,
-      color: d3.scaleOrdinal(d3.schemeCategory20),
+      // color: d3.scaleOrdinal(d3.interpolateRainbow),
       settings: {
         strokeColor: "#29B5FF",
         width: 100,
@@ -41,12 +41,11 @@ export default {
   mounted: function() {
     var that = this;
     console.log("mounted");
-    d3.json("./src/PRISM_data.json", function(error, graph) {
-      if (error) throw error;
+    d3.json("./src/PRISM_data.json").then(function(graph) {
+      // if (error) throw error;
       that.graph = graph
       console.log("json")
       that.$set(that.nodes, that.reNodes())
-      console.log('nodes init')
     })
   },
   methods: {
@@ -64,19 +63,20 @@ export default {
           .attr("r", 5)
         return d3.selectAll("circle")
           .each(function(d, i) {
-            console.log(i)
             var selection = d3.select(this)
             selection.transition()
               .attr('cx', that.graph.nodes[i].cx)
               .attr("cy", that.graph.nodes[i].cy)
               .attr("fill", function(d, i) {
-                return that.color(d.group);
+                // return that.color(d.group / that.graph.groups.length);
+                return d3.interpolateRainbow(d.group / that.graph.groups.length)
               })
           })
       }
     },
     onClick: function(event) {
       var that = this
+      // console.log(that.graph)
       if (that.choice.length == 2) {
         const params = new URLSearchParams()
         params.set('userName', this.$parent.userName)
@@ -220,14 +220,14 @@ export default {
                 var selection = d3.select(this)
                 if (selection.attr('stroke') == 'black') {
                   selection.attr("stroke-width", 3)
-                    .attr('stroke', d3.rgb(102, 255, 255))
+                    .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
                       that.choice.push(i)
                       break
                     }
                   }
-                } else if (selection.attr('stroke') == d3.rgb(102, 255, 255)) {
+                } else if (selection.attr('stroke') == d3.rgb(102, 200, 255)) {
                   selection.attr("stroke-width", 1)
                     .attr('stroke', 'black')
                   let tmp
@@ -293,7 +293,7 @@ export default {
     // }
   },
   updated: function(){
-    console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
+    // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
   }
 }
 </script>
