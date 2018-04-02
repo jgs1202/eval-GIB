@@ -41,7 +41,7 @@ export default {
   mounted: function() {
     var that = this;
     console.log("mounted");
-    d3.json("./src/PRISM_data.json").then(function(graph) {
+    d3.json("./src/0.json").then(function(graph) {
       // if (error) throw error;
       that.graph = graph
       console.log("json")
