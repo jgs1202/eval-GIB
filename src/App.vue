@@ -214,11 +214,25 @@ export default {
           .attr("fill", 'transparent')
 
         function func(event) {
+          console.log(event)
           d3.selectAll('rect')
             .each(function(d, i) {
               if (event.x == d.x && event.y == d.y) {
                 var selection = d3.select(this)
                 if (selection.attr('stroke') == 'black') {
+                  // selection.remove()
+                  // console.log(this.attributes.index)
+                  // d3.select("svg").append("rect")
+                  //   .attr("stroke", d3.rgb(102, 200, 255))
+                  //   .attr("stroke-width", 3)
+                  //   .attr("fill", 'transparent')
+                  //   .attr('index', this.attributes.index)
+                  //   .attr('x', this.x.animVal.value)
+                  //   .attr('y', this.y.animVal.value)
+                  //   .attr('width', this.width.animVal.value)
+                  //   .attr('height', this.height.animVal.value)
+                  //   .on('click', func)
+                  this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
@@ -255,13 +269,15 @@ export default {
             // console.log(d)
             // console.log(this)
             // console.log(that.graph.nodes[i].cx)
-            var selection = d3.select(this)
-              .on("click", func)
-              .attr('index', i)
-              .attr('x', d['x'])
-              .attr('y', d['y'])
-              .attr('width', d['dx'])
-              .attr('height', d['dy'])
+            if ( d['dx']!=that.settings.svgWigth && d['dy']!=that.settings.svgHeight){
+              var selection = d3.select(this)
+                .attr('index', i)
+                .attr('x', d['x'])
+                .attr('y', d['y'])
+                .attr('width', d['dx'])
+                .attr('height', d['dy'])
+                .on('click', func)
+              }
           })
       }
     }
