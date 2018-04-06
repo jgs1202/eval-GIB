@@ -59,7 +59,7 @@ class Resource(Resource):
 
 
 def write(array):
-    user = Choice(array[0], array[1], array[2], array[3], array[4])
+    user = Choice(array[0], array[1], array[2], array[3])
     db.session.add(user)
     db.session.commit()
 
@@ -76,8 +76,8 @@ class Hello(Resource):
     def get(self, params):
         param = params.split('&')
         param = [p.split('=')[1] for p in param]
-        write(param)
         print(param)
+        write(param)
         return param
 
 api.add_resource(Hello, '/data/<params>')

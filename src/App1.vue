@@ -77,7 +77,7 @@ export default {
     onClick: function(event) {
       var that = this
       // console.log(that.graph)
-      if (that.choice.length == 2) {
+      if (that.choice.length == 1) {
         const params = new URLSearchParams()
         params.set('userName', this.$parent.userName)
         params.set('e-mail', 'sample@ex.com')
@@ -93,7 +93,7 @@ export default {
         d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
         that.$set(that.nodes, that.reNodes())
       } else {
-        alert('Choose 2 boxes.')
+        alert('Choose 1 boxes.')
       }
     }
   },
