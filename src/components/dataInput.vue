@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     send: function(event) {
-      this.$parent.currentPage = 'App'
+      this.$parent.currentPage = 'Menu'
       this.$parent.userName = this.userName
       this.$parent.age = this.Age
       this.$parent.gender = this.gender
