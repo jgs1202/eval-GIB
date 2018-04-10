@@ -11,8 +11,8 @@
   <div class="svg-container" :style="{width: settings.width + '%'}">
     <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
-      <g :id="links"></g>
-      <g :id='boxes'></g>
+      <g id="links">{{links}}</g>
+      <g id='boxes'>{{links}}</g>
     </svg>
   </div>
 </div>
@@ -35,20 +35,36 @@ export default {
         svgHeight: 600
       },
       nodes: [],
-      choice: []
+      links: [],
+      boxes: [],
+      choice: [],
+      dataNum: 0,
     }
   },
   mounted: function() {
     var that = this;
     console.log("mounted");
-    d3.json("./src/data/0.json").then(function(graph) {
-      // if (error) throw error;
+    d3.json("./src/data/" + '' + that.dataNum +".json").then(function(graph) {
+      // if (err) throw err;
       that.graph = graph
       console.log("json")
       that.$set(that.nodes, that.reNodes())
+      that.$set(that.links, that.reLinks())
+      that.$set(that.boxes, that.reBoxes())
+      that.dataNum += 1
+      console.log(that.graph.nodes.length)
     })
   },
   methods: {
+    restart: function(){
+      var that = this;
+      console.log("mounted");
+      d3.json("./src/data/" + '' + that.dataNum +".json").then(function(graph) {
+        console.log(that.dataNum)
+        that.graph = graph
+        that.dataNum += 1
+      })
+    },
     reNodes: function() {
       var that = this;
       if (that.graph) {
@@ -91,9 +107,135 @@ export default {
           })
         that.choice = []
         d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
-        that.$set(that.nodes, that.reNodes())
+        that.restart()
+        // that.$set(that.nodes, that.reNodes())
+        // console.log('nodes')
+        // that.$set(that.links, that.reLinks())
+        // console.log('links')
+        // that.$set(that.boxes, that.reBoxes())
+        // console.log('boxes')
       } else {
         alert('Choose 1 boxes.')
+      }
+    },
+    reLinks: function() {
+      var that = this;
+      if (that.graph) {
+        d3.select("svg").append("g")
+          .attr("class", "links")
+          .selectAll("line")
+          .data(that.graph.links)
+          .enter().append("line")
+          .attr("stroke-width", function(d) {
+            // return Math.sqrt(d.value);
+            return Math.sqrt(1);
+          })
+        d3.selectAll("line")
+          .each(function(d, i) {
+            // console.log('d is ')
+            // console.log(d)
+            var selection = d3.select(this)
+            selection.attr('x1', function(d) {
+                // console.log(that.graph.nodes[d.source].cx)
+                return that.graph.nodes[d.source].cx
+              })
+              .attr('y1', function(d) {
+                return that.graph.nodes[d.source].cy
+              })
+              .attr('x2', function(d) {
+                return that.graph.nodes[d.target].cx
+              })
+              .attr('y2', function(d) {
+                return that.graph.nodes[d.target].cy
+              })
+          })
+        d3.selection.prototype.moveToFront = function() {
+          return this.each(function() {
+            this.parentNode.parentNode.appendChild(this.parentNode);
+          })
+        }
+        d3.select('circle').moveToFront()
+        return d3.selectAll("line")
+      }
+    },
+    reBoxes: function() {
+      var that = this
+      if (that.graph) {
+        d3.select("svg").append("g")
+          .attr("class", "rect")
+          .selectAll("rect")
+          .data(that.graph.groups)
+          .enter().append("rect")
+          .attr("stroke", "black")
+          .attr("stroke-width", 1)
+          .attr("fill", 'transparent')
+
+        function func(event) {
+          // console.log(event)
+          d3.selectAll('rect')
+            .each(function(d, i) {
+              if (event.x == d.x && event.y == d.y) {
+                var selection = d3.select(this)
+                if (selection.attr('stroke') == 'black') {
+                  // selection.remove()
+                  // console.log(this.attributes.index)
+                  // d3.select("svg").append("rect")
+                  //   .attr("stroke", d3.rgb(102, 200, 255))
+                  //   .attr("stroke-width", 3)
+                  //   .attr("fill", 'transparent')
+                  //   .attr('index', this.attributes.index)
+                  //   .attr('x', this.x.animVal.value)
+                  //   .attr('y', this.y.animVal.value)
+                  //   .attr('width', this.width.animVal.value)
+                  //   .attr('height', this.height.animVal.value)
+                  //   .on('click', func)
+                  this.parentNode.appendChild(this)
+                  selection.attr("stroke-width", 3)
+                    .attr('stroke', d3.rgb(102, 200, 255))
+                  for (let i in that.graph.groups) {
+                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
+                      that.choice.push(i)
+                      break
+                    }
+                  }
+                } else if (selection.attr('stroke') == d3.rgb(102, 200, 255)) {
+                  selection.attr("stroke-width", 1)
+                    .attr('stroke', 'black')
+                  let tmp
+                  for (let i in that.graph.groups) {
+                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
+                      tmp = i
+                      // console.log(i)
+                      break
+                    }
+                  }
+                  for (let i in that.choice) {
+                    if (tmp == that.choice[i]) {
+                      that.choice.splice(i, 1)
+                    }
+                  }
+                }
+              }
+            })
+          console.log(that.choice)
+        }
+
+        return d3.selectAll('rect')
+          .each(function(d, i) {
+            // console.log(d['x'])
+            // console.log(d)
+            // console.log(this)
+            // console.log(that.graph.nodes[i].cx)
+            if ( d['dx']!=that.settings.svgWigth && d['dy']!=that.settings.svgHeight){
+              var selection = d3.select(this)
+                .attr('index', i)
+                .attr('x', d['x'])
+                .attr('y', d['y'])
+                .attr('width', d['dx'])
+                .attr('height', d['dy'])
+                .on('click', func)
+              }
+          })
       }
     }
   },
@@ -161,7 +303,7 @@ export default {
           })
       }
     },
-    links: function() {
+    exlinks: function() {
       var that = this;
       if (that.graph) {
         d3.select("svg").append("g")
@@ -201,7 +343,7 @@ export default {
         return d3.selectAll("line")
       }
     },
-    boxes: function() {
+    exboxes: function() {
       var that = this
       if (that.graph) {
         d3.select("svg").append("g")

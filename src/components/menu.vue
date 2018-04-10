@@ -11,10 +11,10 @@
           <el-button type="success" v-on:click="click2">　　　　task2　　　　</el-button>
         </el-row>
         <el-row>
-          <el-button type="warning">　　　　task3　　　　</el-button>
+          <el-button type="warning" v-on:click="click3">　　　　task3　　　　</el-button>
         </el-row>
         <el-row>
-          <el-button type="danger">　　　　task4　　　　</el-button>
+          <el-button type="danger" v-on:click="click4">　　　　task4　　　　</el-button>
         </el-row>
       </div>
     </div>
@@ -40,10 +40,16 @@ export default {
       this.$parent.gender = this.gender
     },
     click1: function(event){
-      this.$parent.currentPage = 'App1'
+      this.$parent.currentPage = 'App'
     },
     click2: function(event){
-      this.$parent.currentPage = 'App2'
+      this.$parent.currentPage = 'App1'
+    },
+    click3: function(event){
+      this.$parent.currentPage = 'App'
+    },
+    click4: function(event){
+      this.$parent.currentPage = 'App1'
     }
   }
 }
