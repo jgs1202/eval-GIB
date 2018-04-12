@@ -12,7 +12,7 @@
     <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
-      <g id='boxes'>{{links}}</g>
+      <g id='boxes'>{{boxes}}</g>
     </svg>
   </div>
 </div>
@@ -44,7 +44,7 @@ export default {
   mounted: function() {
     var that = this;
     console.log("mounted");
-    d3.json("./src/data/" + '' + that.dataNum +".json").then(function(graph) {
+    d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
       console.log("json")
@@ -52,16 +52,20 @@ export default {
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
       that.dataNum += 1
-      console.log(that.graph.nodes.length)
+      // console.log(that.graph.nodes.length)
     })
   },
   methods: {
-    restart: function(){
+    restart: function() {
       var that = this;
       console.log("mounted");
-      d3.json("./src/data/" + '' + that.dataNum +".json").then(function(graph) {
-        console.log(that.dataNum)
+      d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
         that.graph = graph
+        that.$set(that.nodes, that.reNodes())
+        console.log('nodes')
+        that.$set(that.links, that.reLinks())
+        console.log('links')
+        that.$set(that.boxes, that.reBoxes())
         that.dataNum += 1
       })
     },
@@ -99,6 +103,7 @@ export default {
         params.set('e-mail', 'sample@ex.com')
         params.set('id', 'sample')
         params.set('choice', that.choice)
+        console.log(that.choice)
         // params.set('choice1', that.choice[1])
         const url = `http://0.0.0.0:5000/data/${params.toString()}`
         axios.get(url)
@@ -107,12 +112,12 @@ export default {
           })
         that.choice = []
         d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
+        d3.selectAll('circle').remove()
+        d3.selectAll('line').remove()
+        d3.selectAll('rect').remove()
+        // that.graph = 0
+        // d3.select('svg').remove()
         that.restart()
-        // that.$set(that.nodes, that.reNodes())
-        // console.log('nodes')
-        // that.$set(that.links, that.reLinks())
-        // console.log('links')
-        // that.$set(that.boxes, that.reBoxes())
         // console.log('boxes')
       } else {
         alert('Choose 1 boxes.')
@@ -205,7 +210,7 @@ export default {
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
                       tmp = i
-                      // console.log(i)
+                      console.log(i)
                       break
                     }
                   }
@@ -226,7 +231,7 @@ export default {
             // console.log(d)
             // console.log(this)
             // console.log(that.graph.nodes[i].cx)
-            if ( d['dx']!=that.settings.svgWigth && d['dy']!=that.settings.svgHeight){
+            if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
                 .attr('x', d['x'])
@@ -234,7 +239,7 @@ export default {
                 .attr('width', d['dx'])
                 .attr('height', d['dy'])
                 .on('click', func)
-              }
+            }
           })
       }
     }
@@ -411,7 +416,7 @@ export default {
             // console.log(d)
             // console.log(this)
             // console.log(that.graph.nodes[i].cx)
-            if ( d['dx']!=that.settings.svgWigth && d['dy']!=that.settings.svgHeight){
+            if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
                 .attr('x', d['x'])
@@ -419,7 +424,7 @@ export default {
                 .attr('width', d['dx'])
                 .attr('height', d['dy'])
                 .on('click', func)
-              }
+            }
           })
       }
     }
@@ -450,7 +455,7 @@ export default {
     //   });
     // }
   },
-  updated: function(){
+  updated: function() {
     // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
   }
 }
