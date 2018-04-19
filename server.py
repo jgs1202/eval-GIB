@@ -59,7 +59,7 @@ api = Api(app)
 #
 #
 def write(array):
-    post = Choice(array[0], array[1], array[2], array[3])
+    post = Choice(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7])
     print(post, array)
     db.session.add(post)
     db.session.commit()

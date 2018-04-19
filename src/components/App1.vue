@@ -47,6 +47,7 @@ export default {
     d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
+      that.graph.groups.pop()
       console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
@@ -61,10 +62,9 @@ export default {
       console.log("mounted");
       d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
         that.graph = graph
+        that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
-        console.log('nodes')
         that.$set(that.links, that.reLinks())
-        console.log('links')
         that.$set(that.boxes, that.reBoxes())
         that.dataNum += 1
       })
@@ -100,10 +100,13 @@ export default {
       if (that.choice.length == 1) {
         const params = new URLSearchParams()
         params.set('userName', this.$parent.userName)
-        params.set('e-mail', 'sample@ex.com')
-        params.set('id', 'sample')
+        params.set('gender', this.$parent.gender)
+        params.set('age', this.$parent.age)
+        params.set('groupSize', that.graph.groupSize)
+        params.set('pgroup', that.graph.pgroup)
+        params.set('pout', that.graph.pout)
+        params.set('file', that.graph.file)
         params.set('choice', that.choice)
-        console.log(that.choice)
         // params.set('choice1', that.choice[1])
         const url = `http://0.0.0.0:5000/data/${params.toString()}`
         axios.get(url)
@@ -227,10 +230,6 @@ export default {
 
         return d3.selectAll('rect')
           .each(function(d, i) {
-            // console.log(d['x'])
-            // console.log(d)
-            // console.log(this)
-            // console.log(that.graph.nodes[i].cx)
             if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)

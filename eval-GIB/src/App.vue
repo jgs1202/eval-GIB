@@ -252,7 +252,7 @@ export default {
         return d3.selectAll('rect')
           .each(function(d, i) {
             // console.log(d['x'])
-            // console.log(d)
+            console.log(d)
             // console.log(this)
             // console.log(that.graph.nodes[i].cx)
             var selection = d3.select(this)

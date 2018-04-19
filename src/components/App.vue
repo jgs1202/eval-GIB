@@ -47,6 +47,7 @@ export default {
     d3.json("./src/data/0.json").then(function(graph) {
       // if (error) throw error;
       that.graph = graph
+      that.graph.groups.pop()
       console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
@@ -61,6 +62,7 @@ export default {
       console.log("mounted");
       d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
         that.graph = graph
+        that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
         console.log('nodes')
         that.$set(that.links, that.reLinks())
@@ -100,8 +102,12 @@ export default {
       if (that.choice.length == 2) {
         const params = new URLSearchParams()
         params.set('userName', this.$parent.userName)
-        params.set('e-mail', 'sample@ex.com')
-        params.set('id', 'sample')
+        params.set('gender', this.$parent.gender)
+        params.set('age', this.$parent.age)
+        params.set('groupSize', that.graph.groupSize)
+        params.set('pgroup', that.graph.pgroup)
+        params.set('pout', that.graph.pout)
+        params.set('file', that.graph.file)
         params.set('choice', that.choice)
         const url = `http://0.0.0.0:5000/data/${params.toString()}`
         axios.get(url)
