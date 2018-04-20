@@ -110,7 +110,7 @@ export default {
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
-          params.set('task', 1)
+          params.set('task', 3)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
@@ -465,9 +465,9 @@ export default {
     //   });
     // }
   },
-  updated: function() {
-    // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
-  }
+  // updated: function() {
+  //   // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
+  // }
 }
 </script>
 
@@ -475,7 +475,7 @@ export default {
 <style>
 body {
   margin: auto;
-  width: 80%;
+  width: 100%;
   height: 100%;
   font-family: monospace;
 }
@@ -491,20 +491,13 @@ body {
 }
 
 .svg-container {
-  position: relative;
-  height: 100%;
-  /* display: table; */
-  margin: auto;
+  display: table;
   border: 0px solid #f8f8f8;
   /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
 }
 
 .controls>*+* {
   margin-top: 1rem;
-}
-
-.container{
-  text-align: center;
 }
 
 label {

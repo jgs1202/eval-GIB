@@ -5,7 +5,7 @@
     <div>
       <label>Adjust width</label>
       <input type="range" v-model="settings.width" min="0" max="100" />
-      <button v-on:click="onClick()">Send Answer</button>
+      <!-- <button v-on:click="onClick()">Send Answer</button> -->
     </div>
   </div>
   <div class="svg-container" :style="{width: settings.width + '%'}">
@@ -21,6 +21,7 @@
 <script>
 import axios from 'axios'
 const d3 = require('d3')
+const swal = require('sweetalert')
 export default {
   name: 'app',
   data: function() {
@@ -35,40 +36,44 @@ export default {
         svgHeight: 600
       },
       nodes: [],
-      choice: [],
       links: [],
       boxes: [],
+      choice: [],
       dataNum: 0,
+      dataMax: 10,
     }
   },
   mounted: function() {
+    window.addEventListener('keyup', this.onClick)
     var that = this;
     console.log("mounted");
-    d3.json("./src/data/0.json").then(function(graph) {
-      // if (error) throw error;
+    d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
+      // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
       console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      that.dataNum += 1
-      that.$set(that.nodes, that.reNodes())
+      // console.log(that.graph.nodes.length)
     })
   },
   methods: {
     restart: function() {
       var that = this;
+      that.dataNum += 1
+      console.log(that.dataNum)
+      if (that.dataNum == that.dataMax){
+        that.dataNum = 0
+        this.$parent.currentPage = 'Menu'
+      }
       console.log("mounted");
       d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
         that.graph = graph
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
-        console.log('nodes')
         that.$set(that.links, that.reLinks())
-        console.log('links')
         that.$set(that.boxes, that.reBoxes())
-        that.dataNum += 1
       })
     },
     reNodes: function() {
@@ -97,31 +102,39 @@ export default {
       }
     },
     onClick: function(event) {
-      var that = this
-      // console.log(that.graph)
-      if (that.choice.length == 2) {
-        const params = new URLSearchParams()
-        params.set('userName', this.$parent.userName)
-        params.set('gender', this.$parent.gender)
-        params.set('age', this.$parent.age)
-        params.set('groupSize', that.graph.groupSize)
-        params.set('pgroup', that.graph.pgroup)
-        params.set('pout', that.graph.pout)
-        params.set('file', that.graph.file)
-        params.set('choice', that.choice)
-        const url = `http://0.0.0.0:5000/data/${params.toString()}`
-        axios.get(url)
-          .then(res => {
-            console.log(res.data)
-          })
-        that.choice = []
-        d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
-        d3.selectAll('circle').remove()
-        d3.selectAll('line').remove()
-        d3.selectAll('rect').remove()
-        that.restart()
-      } else {
-        alert('Choose 2 boxes.')
+      if (event.keyCode == '13') {
+        var that = this
+        // console.log(that.graph)
+        if (that.choice.length == 1) {
+          const params = new URLSearchParams()
+          params.set('userName', this.$parent.userName)
+          params.set('gender', this.$parent.gender)
+          params.set('age', this.$parent.age)
+          params.set('task', 1)
+          params.set('groupSize', that.graph.groupSize)
+          params.set('pgroup', that.graph.pgroup)
+          params.set('pout', that.graph.pout)
+          params.set('file', that.graph.file)
+          params.set('choice', that.choice)
+          // params.set('choice1', that.choice[1])
+          const url = `http://0.0.0.0:5000/data/${params.toString()}`
+          axios.get(url)
+            .then(res => {
+              console.log(res.data)
+            })
+          that.choice = []
+          d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
+          d3.selectAll('circle').remove()
+          d3.selectAll('line').remove()
+          d3.selectAll('rect').remove()
+          // that.graph = 0
+          // d3.select('svg').remove()
+          that.restart()
+          // console.log('boxes')
+          // } else {
+          //   swal('Choose 1 boxes.')
+          // }
+        }
       }
     },
     reLinks: function() {
@@ -228,10 +241,6 @@ export default {
 
         return d3.selectAll('rect')
           .each(function(d, i) {
-            // console.log(d['x'])
-            // console.log(d)
-            // console.log(this)
-            // console.log(that.graph.nodes[i].cx)
             if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
@@ -465,6 +474,7 @@ export default {
 
 <style>
 body {
+  margin: auto;
   width: 100%;
   height: 100%;
   font-family: monospace;
@@ -482,8 +492,8 @@ body {
 
 .svg-container {
   display: table;
-  border: 1px solid #f8f8f8;
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+  border: 0px solid #f8f8f8;
+  /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
 }
 
 .controls>*+* {

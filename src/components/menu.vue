@@ -16,6 +16,13 @@
         <el-row>
           <el-button type="danger" v-on:click="click4">　　　　task4　　　　</el-button>
         </el-row>
+        <br><br>
+        <el-row :gutter='20' v-if='nextPage != null'>
+            <el-col :span='10' :offset="7">
+              <el-alert :closable=false :center=true title="Press enter to start experiments." type="success">
+              </el-alert>
+            </el-col>
+        </el-row>
       </div>
     </div>
   </el-main>
@@ -23,6 +30,7 @@
 </template>
 
 <script>
+const swal = require('sweetalert')
 export default {
   name: 'dataInput',
   data: function() {
@@ -30,6 +38,7 @@ export default {
       userName: null,
       age: null,
       gender: "Male",
+      nextPage: null,
     }
   },
   methods: {
@@ -39,32 +48,45 @@ export default {
       this.$parent.age = this.Age
       this.$parent.gender = this.gender
     },
-    click1: function(event){
-      this.$parent.currentPage = 'App'
+    click1: function(event) {
+      this.nextPage = 'App1'
+      window.addEventListener('keyup', this.submit, false)
     },
-    click2: function(event){
-      this.$parent.currentPage = 'App1'
+    click2: function(event) {
+      this.nextPage = 'App2'
+      window.addEventListener('keyup', this.submit, false)
     },
-    click3: function(event){
-      this.$parent.currentPage = 'App'
+    click3: function(event) {
+      this.nextPage = 'App3'
+      window.addEventListener('keyup', this.submit, false)
     },
-    click4: function(event){
-      this.$parent.currentPage = 'App1'
+    click4: function(event) {
+      this.nextPage = 'App4'
+      window.addEventListener('keyup', this.submit, false)
+    },
+    submit: function(event) {
+      // console.log('key')
+      if (event.keyCode == 13) {
+        if (this.nextPage == null) {
+          swal("Choose a task.")
+        } else {
+          this.$parent.currentPage = this.nextPage
+        }
+      }
     }
+
   }
 }
 </script>
 
 <style>
-
 .el-row {
   margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
+  text-align:  center;
+  margin-left: auto;
 }
 
-.el-button{
+.el-button {
   size: small;
 }
 
@@ -72,7 +94,7 @@ export default {
 body {
   width: 100%;
   height: 100%;
-  font-family: monospace;
+  font-family: 'serif';
   text-align: center;
 }
 

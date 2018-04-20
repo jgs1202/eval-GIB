@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import {
     Row,
+    Col,
+    Alert,
     Select,
     Radio,
     Input,
@@ -20,6 +22,8 @@ import {
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(Row)
+Vue.use(Col)
+Vue.use(Alert)
 Vue.use(Select)
 Vue.use(Input)
 Vue.use(Radio)

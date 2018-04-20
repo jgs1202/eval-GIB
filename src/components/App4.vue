@@ -36,9 +36,9 @@ export default {
         svgHeight: 600
       },
       nodes: [],
+      choice: [],
       links: [],
       boxes: [],
-      choice: [],
       dataNum: 0,
       dataMax: 10,
     }
@@ -47,27 +47,24 @@ export default {
     window.addEventListener('keyup', this.onClick)
     var that = this;
     console.log("mounted");
-    d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
-      // if (err) throw err;
+    d3.json("./src/data/0.json").then(function(graph) {
+      // if (error) throw error;
       that.graph = graph
       that.graph.groups.pop()
       console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      // console.log(that.graph.nodes.length)
     })
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
-      console.log(that.dataNum)
-      if (that.dataNum == that.dataMax){
+      if(that.dataNum == that.dataMax){
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
-      console.log("mounted");
       d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
         that.graph = graph
         that.graph.groups.pop()
@@ -105,18 +102,17 @@ export default {
       if (event.keyCode == '13') {
         var that = this
         // console.log(that.graph)
-        if (that.choice.length == 1) {
+        if (that.choice.length == 2) {
           const params = new URLSearchParams()
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
-          params.set('task', 1)
+          params.set('task', 4)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
           params.set('choice', that.choice)
-          // params.set('choice1', that.choice[1])
           const url = `http://0.0.0.0:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
@@ -127,13 +123,9 @@ export default {
           d3.selectAll('circle').remove()
           d3.selectAll('line').remove()
           d3.selectAll('rect').remove()
-          // that.graph = 0
-          // d3.select('svg').remove()
           that.restart()
-          // console.log('boxes')
           // } else {
-          //   swal('Choose 1 boxes.')
-          // }
+          //   swal('Choose 2 boxes.')
         }
       }
     },
@@ -241,6 +233,10 @@ export default {
 
         return d3.selectAll('rect')
           .each(function(d, i) {
+            // console.log(d['x'])
+            // console.log(d)
+            // console.log(this)
+            // console.log(that.graph.nodes[i].cx)
             if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
@@ -475,7 +471,7 @@ export default {
 <style>
 body {
   margin: auto;
-  width: 80%;
+  width: 100%;
   height: 100%;
   font-family: monospace;
 }
@@ -486,26 +482,19 @@ body {
   left: 16px;
   background: #f8f8f8;
   padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
 }
 
 .svg-container {
-  position: relative;
-  height: 100%;
-  /* display: table; */
-  margin: auto;
+  display: table;
   border: 0px solid #f8f8f8;
   /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
 }
 
-.controls>*+* {
+/* .controls>*+* {
   margin-top: 1rem;
-}
-
-.container{
-  text-align: center;
-}
+} */
 
 label {
   display: block;
