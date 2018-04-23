@@ -1,7 +1,7 @@
 <template>
 <el-container>
   <el-header></el-header>
-  <el-main>
+  <!-- <el-main> -->
     <div id="dataInput">
       <div class="dataInput">
         <el-row>
@@ -25,7 +25,7 @@
         </el-row>
       </div>
     </div>
-  </el-main>
+  <!-- </el-main> -->
 </el-container>
 </template>
 
@@ -105,9 +105,5 @@ table {
 
 tr {
   margin-top: 10px;
-}
-
-.dataInput {
-  margin: auto;
 }
 </style>

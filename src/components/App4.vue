@@ -1,22 +1,30 @@
 
 <template>
 <div id="app">
-  <div class="controls">
-    <div>
-      <label>Adjust width</label>
-      <input type="range" v-model="settings.width" min="0" max="100" />
-      <!-- <button v-on:click="onClick()">Send Answer</button> -->
-    </div>
-  </div>
-  <div class="svg-container" :style="{width: settings.width + '%'}">
-    <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
+  <el-container>
+    <el-aside width='20%'>
+      <div class='text'>
+        Which two groups have the most inter links between themselves?<br>
+      </div>
+      <div class="controls">
+        <br>
+        <label>Adjust width</label>
+        <el-slider v-model="settings.width"></el-slider>
+      </div>
+    </el-aside>
+    <el-main>
+      <div class="svg-container" :style="{width: settings.width + '%'}">
+        <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
     </svg>
-  </div>
+      </div>
+    </el-main>
+  </el-container>
 </div>
 </template>
+
 
 <script>
 import axios from 'axios'
@@ -40,14 +48,27 @@ export default {
       links: [],
       boxes: [],
       dataNum: 0,
+      dataArray: [],
       dataMax: 10,
+      startTime: null,
+      time: null,
+      answer: null,
     }
   },
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
+    for (let i=0; i < 288; i++) {
+      that.dataArray.push(i)
+    }
+    for (var i = that.dataArray.length - 1; i > 0; i--) {
+      var r = Math.floor(Math.random() * (i + 1));
+      var tmp = that.dataArray[i];
+      that.dataArray[i] = that.dataArray[r];
+      that.dataArray[r] = tmp;
+    }
     console.log("mounted");
-    d3.json("./src/data/0.json").then(function(graph) {
+    d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (error) throw error;
       that.graph = graph
       that.graph.groups.pop()
@@ -55,22 +76,25 @@ export default {
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
+      that.startTime = Date.now()
     })
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
-      if(that.dataNum == that.dataMax){
+      if (that.dataNum == that.dataMax) {
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
-      d3.json("./src/data/" + '' + that.dataNum + ".json").then(function(graph) {
+      d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
         that.graph = graph
+        console.log(that.graph.mostConnected)
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
         that.$set(that.boxes, that.reBoxes())
+        that.startTime = Date.now()
       })
     },
     reNodes: function() {
@@ -103,6 +127,7 @@ export default {
         var that = this
         // console.log(that.graph)
         if (that.choice.length == 2) {
+          that.time = Date.now() - that.startTime
           const params = new URLSearchParams()
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
@@ -112,7 +137,19 @@ export default {
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          params.set('choice', that.choice)
+          that.choice.sort(function(a, b) {
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+          });
+          if ((parseInt(that.choice[0]) == parseInt(that.graph.mostConnected[0][0])) && (parseInt(that.choice[1]) == parseInt(that.graph.mostConnected[0][1]) )) {
+            that.answer = 1
+          } else {
+            that.answer = 0
+          }
+          console.log(that.answer, that.choice, that.graph.mostConnected[0])
+          params.set('answer', that.answer)
+          params.set('time', that.time)
           const url = `http://0.0.0.0:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
@@ -205,7 +242,7 @@ export default {
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(i)
+                      that.choice.push(parseInt(i))
                       break
                     }
                   }
@@ -471,30 +508,52 @@ export default {
 <style>
 body {
   margin: auto;
-  width: 100%;
-  height: 100%;
-  font-family: monospace;
+  width: 95%;
+  height: 95%;
+  font-family: 'serif';
 }
 
 .controls {
-  position: fixed;
-  top: 16px;
-  left: 16px;
+  text-align: center;
+  width: 80%;
+  margin: auto;
+  padding-bottom: 2rem;
+  margin-top: 2rem;
+  /* margin: auto; */
   background: #f8f8f8;
   padding: 0.5rem;
-  /* display: flex; */
-  /* flex-direction: column; */
+  display: flex;
+  flex-direction: column;
+}
+
+.text {
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  margin-top: 20%;
+  font-size: 1.3rem;
+}
+
+.el-aside {
+  /* border: 1px solid #67C23A; */
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+}
+
+.el-main {
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+  text-align: center;
 }
 
 .svg-container {
+  margin: auto;
   display: table;
   border: 0px solid #f8f8f8;
   /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
 }
 
-/* .controls>*+* {
+.controls>*+* {
   margin-top: 1rem;
-} */
+}
 
 label {
   display: block;

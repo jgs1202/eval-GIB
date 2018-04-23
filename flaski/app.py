@@ -17,10 +17,11 @@ class Choice(db.Model):
     pgroup = db.Column(db.String(80), unique=False)
     pout = db.Column(db.String(80), unique=False)
     file = db.Column(db.String(80), unique=False)
-    choice = db.Column(db.String(80), unique=False)
+    answer = db.Column(db.String(80), unique=False)
+    time = db.Column(db.String(80), unique=False)
     # choice2 = db.Column(db.String(80), unique=False)
 
-    def __init__(self, username, gender, age, groupSize, pgroup, pout, file, choice):
+    def __init__(self, username, gender, age, groupSize, pgroup, pout, file, answer, time):
         self.username = username
         self.gender = gender
         self.age = age
@@ -28,7 +29,8 @@ class Choice(db.Model):
         self.pgroup = pgroup
         self.pout = pout
         self.file = file
-        self.choice = choice
+        self.answer = answer
+        self.time = time
         # self.choice2 = choice2
 
     def __repr__(self):

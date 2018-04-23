@@ -1,7 +1,9 @@
 <template>
 <el-container>
   <el-header>
-    <h1>GIB Experiment</h1>
+    <div class="title">
+      GIB Experiment
+    </div>
   </el-header>
   <el-main>
     <div id="dataInput">
@@ -23,16 +25,17 @@
           </tr>
           <tr>
             <td>
-              <!-- <el-row> --><br>
+              <div class="row">
                 <el-radio v-model="gender" label="Male" border>Male</el-radio>
                 <el-radio v-model="gender" label="Female" border>Female</el-radio>
-                <br>
-              <!-- </el-row> -->
+              </div>
             </td>
           </tr>
           <tr>
-            <td><br><br>
-              <el-button type="primary" v-on:click='send'>Primary</el-button>
+            <td>
+              <div class="row">
+                <el-button type="primary" v-on:click='send'>Send Data</el-button>
+              </div>
             </td>
           </tr>
         </table>
@@ -65,8 +68,9 @@ export default {
 
 <style>
 body {
-  width: 100%;
-  height: 100%;
+  margin-top: 4rem;
+  width: 95%;
+  height: 95%;
   font-family: 'serif';
   text-align: center;
 }
@@ -91,7 +95,16 @@ td {
   margin-bottom: 0px;
 }
 
-.mini{
+.title {
+  font-size: 2rem;
+}
+
+.row {
+  margin-top: 15px;
+  margin-bottom: 12px;
+}
+
+.mini {
   margin-top: 60px;
 }
 
