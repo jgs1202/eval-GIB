@@ -59,7 +59,7 @@ export default {
     send: function(event) {
       this.$parent.currentPage = 'Menu'
       this.$parent.userName = this.userName
-      this.$parent.age = this.Age
+      this.$parent.age = this.age
       this.$parent.gender = this.gender
     }
   }

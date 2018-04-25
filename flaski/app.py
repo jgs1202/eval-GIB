@@ -13,6 +13,8 @@ class Choice(db.Model):
     username = db.Column(db.String(80), unique=False)
     gender = db.Column(db.String(80), unique=False)
     age = db.Column(db.String(20), unique=False)
+    layout =  db.Column(db.String(80), unique=False)
+    task = db.Column(db.String(20), unique=False)
     groupSize = db.Column(db.String(80), unique=False)
     pgroup = db.Column(db.String(80), unique=False)
     pout = db.Column(db.String(80), unique=False)
@@ -21,10 +23,12 @@ class Choice(db.Model):
     time = db.Column(db.String(80), unique=False)
     # choice2 = db.Column(db.String(80), unique=False)
 
-    def __init__(self, username, gender, age, groupSize, pgroup, pout, file, answer, time):
+    def __init__(self, username, gender, age, layout, task, groupSize, pgroup, pout, file, answer, time):
         self.username = username
         self.gender = gender
         self.age = age
+        self.layout = layout
+        self.task = task
         self.groupSize= groupSize
         self.pgroup = pgroup
         self.pout = pout

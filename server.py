@@ -59,7 +59,7 @@ api = Api(app)
 #
 #
 def write(array):
-    post = Choice(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8])
+    post = Choice(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10])
     print(post, array)
     db.session.add(post)
     db.session.commit()
@@ -76,4 +76,4 @@ api.add_resource(Hello, '/data/<params>')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=False, host='127.0.0.1', port=port)

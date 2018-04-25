@@ -56,7 +56,7 @@ export default {
       choice: [],
       dataArray: [],
       dataNum: 0,
-      dataMax: 20,
+      dataMax: 40,
       options: [],
       radio: null,
       startTime: null,
@@ -66,7 +66,7 @@ export default {
   },
   mounted: function() {
     var that = this;
-    for (let i=0; i < 288; i++) {
+    for (let i=0; i < 313; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -103,9 +103,10 @@ export default {
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
-      console.log("mounted");
       d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
         that.graph = graph
+        console.log('reload')
+        console.log(that.graph.type)
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
@@ -130,7 +131,7 @@ export default {
           .enter().append("circle")
           .attr('cx', that.settings.svgWigth / 2)
           .attr('cy', that.settings.svgHeight / 2)
-          .attr("r", 5)
+          .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
             var selection = d3.select(this)
@@ -154,6 +155,7 @@ export default {
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
+          params.set('layout', that.graph.type)
           params.set('task', 1)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
@@ -166,8 +168,7 @@ export default {
           }
           params.set('answer', that.answer)
           params.set('time', that.time)
-          // params.set('choice1', that.choice[1])
-          const url = `http://0.0.0.0:5000/data/${params.toString()}`
+          const url = `http://127.0.0.1:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
               console.log(res.data)
@@ -301,7 +302,7 @@ export default {
           .enter().append("circle")
           .attr('cx', 0)
           .attr('cy', 0)
-          .attr("r", 5)
+          .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
             // console.log(d)
@@ -547,6 +548,6 @@ label {
 
 .nodes circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1.0px;
 }
 </style>

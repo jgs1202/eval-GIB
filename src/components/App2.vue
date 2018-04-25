@@ -57,7 +57,7 @@ export default {
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    for (let i=0; i < 288; i++) {
+    for (let i=0; i < 313; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -110,7 +110,7 @@ export default {
           .enter().append("circle")
           .attr('cx', that.settings.svgWigth / 2)
           .attr('cy', that.settings.svgHeight / 2)
-          .attr("r", 5)
+          .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
             var selection = d3.select(this)
@@ -134,7 +134,8 @@ export default {
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
-          params.set('task', 1)
+          params.set('layout', that.graph.type)
+          params.set('task', 2)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
@@ -148,7 +149,7 @@ export default {
           params.set('answer', that.answer)
           params.set('time', that.time)
           // params.set('choice1', that.choice[1])
-          const url = `http://0.0.0.0:5000/data/${params.toString()}`
+          const url = `http://127.0.0.1:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
               console.log(res.data)
@@ -239,12 +240,15 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(i)
+                      that.choice = [i]
                       break
                     }
                   }
@@ -564,6 +568,6 @@ label {
 
 .nodes circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1.0px;
 }
 </style>

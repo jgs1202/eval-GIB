@@ -1,10 +1,9 @@
-
 <template>
 <div id="app">
   <el-container>
     <el-aside width='20%'>
       <div class='text'>
-        Which two groups have the most inter links between themselves?<br>
+        Which box has the most inner links?<br>
       </div>
       <div class="controls">
         <br>
@@ -25,7 +24,6 @@
 </div>
 </template>
 
-
 <script>
 import axios from 'axios'
 const d3 = require('d3')
@@ -44,12 +42,12 @@ export default {
         svgHeight: 600
       },
       nodes: [],
-      choice: [],
       links: [],
       boxes: [],
+      choice: [],
       dataNum: 0,
       dataArray: [],
-      dataMax: 10,
+      dataMax: 40,
       startTime: null,
       time: null,
       answer: null,
@@ -58,7 +56,7 @@ export default {
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    for (let i=0; i < 288; i++) {
+    for (let i=0; i < 313; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -69,7 +67,7 @@ export default {
     }
     console.log("mounted");
     d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
-      // if (error) throw error;
+      // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
       console.log("json")
@@ -77,19 +75,20 @@ export default {
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
       that.startTime = Date.now()
+      // console.log(that.graph.nodes.length)
     })
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
-      if (that.dataNum == that.dataMax) {
+      console.log(that.dataNum)
+      if (that.dataNum == that.dataMax){
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
       d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
         that.graph = graph
-        console.log(that.graph.mostConnected)
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
@@ -108,7 +107,7 @@ export default {
           .enter().append("circle")
           .attr('cx', that.settings.svgWigth / 2)
           .attr('cy', that.settings.svgHeight / 2)
-          .attr("r", 5)
+          .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
             var selection = d3.select(this)
@@ -126,31 +125,29 @@ export default {
       if (event.keyCode == '13') {
         var that = this
         // console.log(that.graph)
-        if (that.choice.length == 2) {
+        if (that.choice.length == 1) {
           that.time = Date.now() - that.startTime
           const params = new URLSearchParams()
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
+          params.set('layout', that.graph.type)
           params.set('task', 4)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          that.choice.sort(function(a, b) {
-            if (a < b) return -1;
-            if (a > b) return 1;
-            return 0;
-          });
-          if ((parseInt(that.choice[0]) == parseInt(that.graph.mostConnected[0][0])) && (parseInt(that.choice[1]) == parseInt(that.graph.mostConnected[0][1]) )) {
-            that.answer = 1
-          } else {
-            that.answer = 0
+          that.answer = 0
+          for(let i=0; i<that.graph.linkOutMost.length; i++){
+            if (that.choice[0] == that.graph.linkOutMost[i]){
+              that.answer = 1
+            }
           }
-          console.log(that.answer, that.choice, that.graph.mostConnected[0])
+          console.log(that.answer, that.graph.linkOutMost, that.choice[0])
           params.set('answer', that.answer)
           params.set('time', that.time)
-          const url = `http://0.0.0.0:5000/data/${params.toString()}`
+          // params.set('choice1', that.choice[1])
+          const url = `http://127.0.0.1:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
               console.log(res.data)
@@ -160,9 +157,13 @@ export default {
           d3.selectAll('circle').remove()
           d3.selectAll('line').remove()
           d3.selectAll('rect').remove()
+          // that.graph = 0
+          // d3.select('svg').remove()
           that.restart()
+          // console.log('boxes')
           // } else {
-          //   swal('Choose 2 boxes.')
+          //   swal('Choose 1 boxes.')
+          // }
         }
       }
     },
@@ -237,12 +238,15 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(parseInt(i))
+                      that.choice = [i]
                       break
                     }
                   }
@@ -270,10 +274,6 @@ export default {
 
         return d3.selectAll('rect')
           .each(function(d, i) {
-            // console.log(d['x'])
-            // console.log(d)
-            // console.log(this)
-            // console.log(that.graph.nodes[i].cx)
             if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
@@ -335,7 +335,7 @@ export default {
           .enter().append("circle")
           .attr('cx', 0)
           .attr('cy', 0)
-          .attr("r", 5)
+          .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
             // console.log(d)
@@ -422,12 +422,15 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(i)
+                      that.choice = [i]
                       break
                     }
                   }
@@ -498,9 +501,9 @@ export default {
     //   });
     // }
   },
-  updated: function() {
-    // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
-  }
+  // updated: function() {
+  //   // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
+  // }
 }
 </script>
 
@@ -527,19 +530,19 @@ body {
 }
 
 .text {
-  width: 80%;
+  width : 80%;
   margin: auto;
   text-align: center;
   margin-top: 20%;
   font-size: 1.3rem;
 }
 
-.el-aside {
+.el-aside{
   /* border: 1px solid #67C23A; */
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
 }
 
-.el-main {
+.el-main{
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
   text-align: center;
 }
@@ -566,6 +569,6 @@ label {
 
 .nodes circle {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1.0px;
 }
 </style>

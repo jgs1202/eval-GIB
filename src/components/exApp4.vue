@@ -56,7 +56,7 @@ export default {
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    for (let i=0; i < 313; i++) {
+    for (let i=0; i < 370; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -66,7 +66,7 @@ export default {
       that.dataArray[r] = tmp;
     }
     console.log("mounted");
-    d3.json("./src/data/task3/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+    d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
@@ -87,7 +87,7 @@ export default {
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
-      d3.json("./src/data/task3/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+      d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
         that.graph = graph
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
@@ -107,7 +107,7 @@ export default {
           .enter().append("circle")
           .attr('cx', that.settings.svgWigth / 2)
           .attr('cy', that.settings.svgHeight / 2)
-          .attr("r", 3)
+          .attr("r", 5)
         return d3.selectAll("circle")
           .each(function(d, i) {
             var selection = d3.select(this)
@@ -132,17 +132,17 @@ export default {
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
           params.set('layout', that.graph.type)
-          params.set('task', 3)
+          params.set('task', 4)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.choice[0] == that.graph.linkMax){
+          if (that.choice[0] == that.graph.nodeMin){
             that.answer = 1
           } else {
             that.answer = 0
           }
-          console.log(that.answer, that.graph.linkMax, that.choice[0])
+          console.log(that.answer, that.graph.nodeMin, that.choice[0])
           params.set('answer', that.answer)
           params.set('time', that.time)
           // params.set('choice1', that.choice[1])
@@ -237,15 +237,12 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
-                  d3.selectAll('rect')
-                    .attr("stroke-width", 1)
-                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice = [i]
+                      that.choice.push(i)
                       break
                     }
                   }
@@ -421,15 +418,12 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
-                  d3.selectAll('rect')
-                    .attr("stroke-width", 1)
-                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice = [i]
+                      that.choice.push(i)
                       break
                     }
                   }
@@ -568,6 +562,6 @@ label {
 
 .nodes circle {
   stroke: #fff;
-  stroke-width: 1.0px;
+  stroke-width: 1.5px;
 }
 </style>
