@@ -1,27 +1,30 @@
-
 <template>
-<div id="app">
-  <el-container>
-    <el-aside width='20%'>
-      <div class='text'>
-        Which is the third largest box?<br>
-      </div>
-      <div class="controls">
-        <br>
-        <label>Adjust width</label>
-        <el-slider v-model="settings.width"></el-slider>
-      </div>
-    </el-aside>
-    <el-main>
-      <div class="svg-container" :style="{width: settings.width + '%'}">
-        <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
+<div>
+  <div id="app" class="app">
+    <el-container>
+      <el-aside width='20%'>
+        <div class='text'>
+          Which is the third largest box?<br>
+        </div>
+        <div class="controls">
+          <br>
+          <label>Adjust width</label>
+          <el-slider v-model="settings.width"></el-slider>
+        </div>
+      </el-aside>
+      <el-main>
+        <div class="svg-container" :style="{width: settings.width + '%'}">
+          <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
     </svg>
-      </div>
-    </el-main>
-  </el-container>
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+  <div class="sync">
+  </div>
 </div>
 </template>
 
@@ -96,8 +99,17 @@ export default {
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
         that.$set(that.boxes, that.reBoxes())
-        that.startTime = Date.now()
       })
+      var sync = document.getElementsByClassName('sync')
+      console.log(sync[0].style.background)
+      for(let i=0; i<sync.length; i++){
+        if ( that.dataNum % 2 == 0 ){
+          sync[i].style.background = 'black'
+        } else {
+          sync[i].style.background = 'white'
+        }
+      }
+      that.startTime = Date.now()
     },
     reNodes: function() {
       var that = this;
@@ -510,6 +522,13 @@ export default {
 <style>
 body {
   margin: auto;
+  width: 100%;
+  height: 100%;
+  font-family: 'serif';
+}
+
+.app {
+  margin: auto;
   width: 95%;
   height: 95%;
   font-family: 'serif';
@@ -526,6 +545,15 @@ body {
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
+}
+
+.sync {
+  background: black;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .text {

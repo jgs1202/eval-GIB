@@ -1,35 +1,38 @@
-dataArray[that.dataNum]x
 <template>
-<div id="app">
-  <el-container>
-    <el-aside width='20%'>
-      <div class='text'>
-        How many boxes are displayed?<br>
-      </div>
-      <div class="controls">
-        <br>
-        <label>Adjust width</label>
-        <el-slider v-model="settings.width"></el-slider>
-        <!-- <input type="range" v-model="settings.width" min="0" max="100" /> -->
-      </div>
-      <div class="question">
-        <br><br>
-        <el-radio v-model="radio" label="0" border>{{options[0]}}</el-radio>
-        <el-radio v-model="radio" label="1" border>{{options[1]}}</el-radio><br>
-        <el-radio v-model="radio" label="2" border>{{options[2]}}</el-radio>
-        <el-radio v-model="radio" label="3" border>{{options[3]}}</el-radio>
-      </div>
-    </el-aside>
-    <el-main>
-      <div class="svg-container" :style="{width: settings.width + '%'}">
-        <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
+<div>
+  <div id="app" class="app">
+    <el-container>
+      <el-aside width='20%'>
+        <div class='text'>
+          How many boxes are displayed?<br>
+        </div>
+        <div class="controls">
+          <br>
+          <label>Adjust width</label>
+          <el-slider v-model="settings.width"></el-slider>
+          <!-- <input type="range" v-model="settings.width" min="0" max="100" /> -->
+        </div>
+        <div class="question">
+          <br><br>
+          <el-radio v-model="radio" label="0" border>{{options[0]}}</el-radio>
+          <el-radio v-model="radio" label="1" border>{{options[1]}}</el-radio><br>
+          <el-radio v-model="radio" label="2" border>{{options[2]}}</el-radio>
+          <el-radio v-model="radio" label="3" border>{{options[3]}}</el-radio>
+        </div>
+      </el-aside>
+      <el-main>
+        <div class="svg-container" :style="{width: settings.width + '%'}">
+          <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
     </svg>
-      </div>
-    </el-main>
-  </el-container>
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+  <div class="sync">
+  </div>
 </div>
 </template>
 
@@ -56,7 +59,7 @@ export default {
       choice: [],
       dataArray: [],
       dataNum: 0,
-      dataMax: 40,
+      dataMax: 20,
       options: [],
       radio: null,
       startTime: null,
@@ -66,7 +69,7 @@ export default {
   },
   mounted: function() {
     var that = this;
-    for (let i=0; i < 313; i++) {
+    for (let i = 0; i < 20; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -106,7 +109,7 @@ export default {
       d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
         that.graph = graph
         console.log('reload')
-        console.log(that.graph.type)
+        console.log(that.graph.links.length)
         that.graph.groups.pop()
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
@@ -118,6 +121,15 @@ export default {
         }
         that.options = array
       })
+      var sync = document.getElementsByClassName('sync')
+      console.log(sync[0].style.background)
+      for(let i=0; i<sync.length; i++){
+        if ( that.dataNum % 2 == 0 ){
+          sync[i].style.background = 'black'
+        } else {
+          sync[i].style.background = 'white'
+        }
+      }
       that.startTime = Date.now()
     },
     reNodes: function() {
@@ -198,7 +210,7 @@ export default {
           .enter().append("line")
           .attr("stroke-width", function(d) {
             // return Math.sqrt(d.value);
-            return Math.sqrt(1);
+            return 0.6;
           })
         d3.selectAll("line")
           .each(function(d, i) {
@@ -475,10 +487,18 @@ export default {
 <style>
 body {
   margin: auto;
+  width: 100%;
+  height: 100%;
+  font-family: 'serif';
+}
+
+.app {
+  margin: auto;
   width: 95%;
   height: 95%;
   font-family: 'serif';
 }
+
 
 .controls {
   text-align: center;
@@ -544,6 +564,15 @@ label {
 .links line {
   stroke: #999;
   stroke-opacity: 0.6;
+}
+
+.sync {
+  background: black;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .nodes circle {

@@ -1,26 +1,30 @@
 <template>
-<div id="app">
-  <el-container>
-    <el-aside width='20%'>
-      <div class='text'>
-        Which box has the most inner links?<br>
-      </div>
-      <div class="controls">
-        <br>
-        <label>Adjust width</label>
-        <el-slider v-model="settings.width"></el-slider>
-      </div>
-    </el-aside>
-    <el-main>
-      <div class="svg-container" :style="{width: settings.width + '%'}">
-        <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
+<div>
+  <div id="app" class="app">
+    <el-container>
+      <el-aside width='20%'>
+        <div class='text'>
+          Which box does have the most inner links?<br>
+        </div>
+        <div class="controls">
+          <br>
+          <label>Adjust width</label>
+          <el-slider v-model="settings.width"></el-slider>
+        </div>
+      </el-aside>
+      <el-main>
+        <div class="svg-container" :style="{width: settings.width + '%'}">
+          <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
     </svg>
-      </div>
-    </el-main>
-  </el-container>
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+  <div class="sync">
+  </div>
 </div>
 </template>
 
@@ -56,7 +60,7 @@ export default {
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    for (let i=0; i < 313; i++) {
+    for (let i = 0; i < 313; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -74,16 +78,16 @@ export default {
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      that.startTime = Date.now()
       // console.log(that.graph.nodes.length)
     })
+    that.startTime = Date.now()
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
       console.log(that.dataNum)
-      if (that.dataNum == that.dataMax){
+      if (that.dataNum == that.dataMax) {
         that.dataNum = 0
         this.$parent.currentPage = 'Menu'
       }
@@ -93,8 +97,17 @@ export default {
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
         that.$set(that.boxes, that.reBoxes())
-        that.startTime = Date.now()
       })
+      var sync = document.getElementsByClassName('sync')
+      console.log(sync[0].style.background)
+      for(let i=0; i<sync.length; i++){
+        if ( that.dataNum % 2 == 0 ){
+          sync[i].style.background = 'black'
+        } else {
+          sync[i].style.background = 'white'
+        }
+      }
+      that.startTime = Date.now()
     },
     reNodes: function() {
       var that = this;
@@ -137,7 +150,7 @@ export default {
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.choice[0] == that.graph.linkMax){
+          if (that.choice[0] == that.graph.linkMax) {
             that.answer = 1
           } else {
             that.answer = 0
@@ -510,6 +523,13 @@ export default {
 <style>
 body {
   margin: auto;
+  width: 100%;
+  height: 100%;
+  font-family: 'serif';
+}
+
+.app {
+  margin: auto;
   width: 95%;
   height: 95%;
   font-family: 'serif';
@@ -528,20 +548,29 @@ body {
   flex-direction: column;
 }
 
+.sync {
+  background: black;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
 .text {
-  width : 80%;
+  width: 80%;
   margin: auto;
   text-align: center;
   margin-top: 20%;
   font-size: 1.3rem;
 }
 
-.el-aside{
+.el-aside {
   /* border: 1px solid #67C23A; */
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
 }
 
-.el-main{
+.el-main {
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
   text-align: center;
 }

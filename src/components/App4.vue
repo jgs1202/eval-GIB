@@ -1,29 +1,32 @@
 <template>
-<div id="app">
-  <el-container>
-    <el-aside width='20%'>
-      <div class='text'>
-        Which box has the most inner links?<br>
-      </div>
-      <div class="controls">
-        <br>
-        <label>Adjust width</label>
-        <el-slider v-model="settings.width"></el-slider>
-      </div>
-    </el-aside>
-    <el-main>
-      <div class="svg-container" :style="{width: settings.width + '%'}">
-        <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
+<div>
+  <div id="app" class="app">
+    <el-container>
+      <el-aside width='20%'>
+        <div class='text'>
+          Which boxes do have inter links between themselves?<br>
+        </div>
+        <div class="controls">
+          <br>
+          <label>Adjust width</label>
+          <el-slider v-model="settings.width"></el-slider>
+        </div>
+      </el-aside>
+      <el-main>
+        <div class="svg-container" :style="{width: settings.width + '%'}">
+          <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
     </svg>
-      </div>
-    </el-main>
-  </el-container>
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+  <div class="sync">
+  </div>
 </div>
 </template>
-
 <script>
 import axios from 'axios'
 const d3 = require('d3')
@@ -93,8 +96,17 @@ export default {
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
         that.$set(that.boxes, that.reBoxes())
-        that.startTime = Date.now()
       })
+      var sync = document.getElementsByClassName('sync')
+      console.log(sync[0].style.background)
+      for(let i=0; i<sync.length; i++){
+        if ( that.dataNum % 2 == 0 ){
+          sync[i].style.background = 'black'
+        } else {
+          sync[i].style.background = 'white'
+        }
+      }
+      that.startTime = Date.now()
     },
     reNodes: function() {
       var that = this;
@@ -511,6 +523,13 @@ export default {
 <style>
 body {
   margin: auto;
+  width: 100%;
+  height: 100%;
+  font-family: 'serif';
+}
+
+.app {
+  margin: auto;
   width: 95%;
   height: 95%;
   font-family: 'serif';
@@ -565,6 +584,15 @@ label {
 .links line {
   stroke: #999;
   stroke-opacity: 0.6;
+}
+
+.sync {
+  background: black;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .nodes circle {
