@@ -1,0 +1,134 @@
+% This is based on the LLNCS.DEM the demonstration file of
+% the LaTeX macro package from Springer-Verlag
+% for Lecture Notes in Computer Science,
+% version 2.4 for LaTeX2e as of 16. April 2010
+%
+% See http://www.springer.com/computer/lncs/lncs+authors?SGWID=0-40209-0-0-0
+% for the full guidelines.
+%
+\documentclass{llncs}
+
+\begin{document}
+
+%-----------------------------------------------------------------------------------------------------
+%-----------------WARNING---------------
+%I don't know how and why i can access to this document but you should protect it to avoid vandalizing, have a good day. -AL
+%-----------------------------------------------------------------------------------------------------
+
+\title{GD Barcelona, 26-28 September 2018}
+%
+\titlerunning{GIB Evaluation}  % abbreviated title (for running head)
+%                                     also used for the TOC unless
+%                                     \toctitle is used
+%
+\author{Paper submission deadline: June 10}
+%
+\authorrunning{Nozomi Aoyama} % abbreviated author list (for running head)
+%
+%%%% list of authors for the TOC (use if author list has to be modified)
+\tocauthor{Nozomi Aoyama}
+%
+\institute{Kyoto University, Japan \\
+\email{gianluca.monaci@naverlabs.com}\\ 
+\url{https://www.europe.naverlabs.com/}}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+Visualizing the group structure of graphs is important in analyzing complex networks. The group structure referred to here includes not only community structures defined in terms of modularity and the like but also group divisions based on node attributes. Group- In-a-Box (GIB) is a graph-drawing method designed for visualizing the group structure of graphs. Using a GIB layout, it is possible to simultaneously visualize group sizes and both within-group and between-group structures. There are several GIB layouts, however, their each merits and demerits are not known. In this study, we evaluate 4 GIB layouts, STGIB, CDGIB, FDGIB and TRGIB by computational experiments and user study. We found that ............
+
+\keywords{GIB, network, graph, evaluation}
+\end{abstract}
+
+%
+\section{Introduction}
+%
+Analyzing graphs is becoming increasingly common in various fields, and the importance of visualizing graphs in a human- comprehensible manner is increasing accordingly. Graph drawing is a visualization technique for outputting the coordinates and shapes of nodes in an input graph [Kaufmann and Wagner 2001; Tamassia 2013]. Various graph drawing methods have been proposed, with different visualization goals and for different input graph characteristics. Real-world data with a graphs such as that of a social network or web graph have special properties characteristic of so- called complex networks [Newman 2010]. One feature of complex networks is their community structure [Girvan and Newman 2002; Newman 2004]. When dividing the nodes of a network into several sets results in dense within-set edges and sparse between-set edges, the network is said to have a community structure. Real-world data often provide information on the groups to which the nodes belong. The effective visualization of the group structures contained in graphs is important for the analysis of real-world data. Group-In-a-Box (GIB) is a graph drawing method designed for visualizing the group structures in graphs [Chaturvedi et al. 2014; Rodrigues et al. 2011]. GIB uses treemapping to divide groups into tiles for visualization. Using a GIB layout enables the simultaneous visualization of group structures, between-group structures, and the sizes of the groups in a graph. Treemapping is a visualization method that takes rectangular regions and numerical columns as inputs to divide a region into tiles with areas proportional to their values [Shneiderman 1992]. There are several GIB layout methods, and each of them has its specific origin and purpose. ST-GIB (Squarified Treemap GIB), the traditional method, is based on the idea of treemapping. In a treemapping, each rectangle represents a group and has an area that is proportional to the value of the group. In the case of ST-GIB, their groups are taken as vertexes in treemaps and shown in the shape of tiles. Each of the boxes has nodes that belong to its group, and its size represent the group's number of nodes. ST-GIB layout just uses a Squarified Treemap algorithm to layout group networks in rectangles, so it does not consider the information of networks when the tiles are placed. The Treemap algorithm facilitates a space-filling arrangement with low box aspect ratios, which is important for analyzing the rectangle content [BHVW00]. However, it does not take ties between groups into account. This is visible in Figure 2(a), where there is an abundance of overlap between the thick grey combined edges, which show the aggregate inter-group relationships. These undesirable overlaps reduce the discernibility of inter-group relations, increase cognitive load and put strain on a user’s efficiency.Moreover, these edge overlaps or crossings have the greatest detrimental impact on understanding networks [Pur97], [Pur98], [PCA02]. While placing groups in individual boxes is highly useful for understanding intra-group relationships,we believe there is also a need for algorithms that arrange groups so as to highlight inter-group ties.
+CD-GIB (croissant and doughnut GIB) layout tackles this problem and take not only nodes but also links into account while arranging boxes. This layout set groups using criteria of G-degree and G-skewness. G-degree means how many boxes a box is connected to by edges, and G-skewness express the fraction of nodes present in the two most connected groups. This layout is intended to reduce edge overlaps or crossings, which helps to understand the graphs. While the edge information is considered, the mean aspect ratio of boxes are expected to be worse.
+FD-GIB (force directed GIB) layout is an approach for showing the inter-groups relationships. The group boxes are positioned using a standard force-directed layout run on the aggregate network,where the nodes represent entire groups and the edges between them represent the aggregate connections between a pair of groups. This layout can maintain the box aspect 1, but we can not utilize the screen effectively.
+TRGIB (tree reordering GIB) is a layout in which the place of arrangement of boxes are optimized to minimize the group proximity while keeping the structure of ST-GIB. The group proximity is the weighted sum of the edge distances between groups. When the group proximity is minimized, the edges length is shortened, so less edge crossings than traditional ST-GIB are expected.
+
+
+%
+\section{Related Work}
+%
+
+
+%
+\section{Layouts}
+%
+\subsection{ST-GIB}
+
+\subsection{CD-GIB}
+
+\subsection{FD-GIB}
+
+\subsection{TR-GIB}
+
+
+%
+\section{Computational Experiments}
+%
+
+We implemented computational experiment to calculate the number of edge-crossing, mean aspect ratio of boxes and the percent screen space wasted against all layouts.
+
+\subsection{Data generation} 
+We used random data for this experiment. In order to generate random data, we run similar algorithm to our previous study. Each graph comprises multiple groups, and graph generation was performed such that there are strong edge connections between some groups. The procedure for generating random graphs is as follows:
+(1) Generate a set of m vertices {V1, · · · ,Vm}. The number of vertices |Vi | in vertex set Vi is determined by drawing random numbers from a uniform distribution between nmin and nmax.
+Additionally, for the vertex pair (u,v) ∀u,v ∈ Vi ,u ? v in vertex set Vi , generate edges with probability pin.
+(2) For pairs of vertex sets Vi and Vj , create between-group edges with probability pgroup. Edge generation between groups is
+performed with probability pbridge for vertex pair (u,v) ∀u ∈ Vi ,v ∈ Vj .
+(3) Generate edges with probability pout between any two ver- tices (u,v) for which edges have not yet been generated.
+For these experiments, we used nmin=10, nmax=30, pin = 0.2, and pbridge = 0.05, and we varied the values of the remaining parameters m, pgroup, and pout for comparison.We considered m ∈ {12, 15, 18, 21}, pgroup = {0, 0.0005, 0.001}, and pout ∈ {0, 0.05, 0.1, 0.2} and produced 50 graphs under each condition. Note that if pgroup = 0 and pout = 0, then there are no edges between groups and only trivial optimal solutions exist; therefore,we excluded this condition.
+
+We calibrated the these parameters to make our data closer in order to Chaturvedi's real Twitter data. Chatuvedi et al. described their data in []. We calculated the means and standard deviations at all combination of variables, and the result are shown Table ??. In this table, we can see the variable combination of [pgroup, pout] = [] is proper because we have 70,000 edges when group size is 11, similar condition to Chaturvedi's real Twitter data. We can use real-like data using this parameters.
+
+In this condition, however, we see that there are too many links and nodes to understand its information. Also this kind of data needs much time to do computational experiment, we reduced the amount of links and nodes. We show an example of before-data-reduced network and after-data-reduced network at Fig. ??. We apply threshold 0.5 to pbridge, pin and group size 
+
+\subsection{result}
+We generated 50 data against each combination of parameters, and then we applied 4 layout algorithms for these data. Table ?? shows the result of computational experiments.
+
+%
+\section{Conclusions and Future Work}
+%
+
+%
+% ---- Bibliography ----
+%
+\begin{thebibliography}{5}
+%
+\bibitem {clar:eke}
+Clarke, F., Ekeland, I.:
+Nonlinear oscillations and
+boundary-value problems for Hamiltonian systems.
+Arch. Rat. Mech. Anal. 78, 315--333 (1982)
+
+\bibitem {clar:eke:2}
+Clarke, F., Ekeland, I.:
+Solutions p\'{e}riodiques, du
+p\'{e}riode donn\'{e}e, des \'{e}quations hamiltoniennes.
+Note CRAS Paris 287, 1013--1015 (1978)
+
+\bibitem {mich:tar}
+Michalek, R., Tarantello, G.:
+Subharmonic solutions with prescribed minimal
+period for nonautonomous Hamiltonian systems.
+J. Diff. Eq. 72, 28--55 (1988)
+
+\bibitem {tar}
+Tarantello, G.:
+Subharmonic solutions for Hamiltonian
+systems via a $\bbbz_{p}$ pseudoindex theory.
+Annali di Matematica Pura (to appear)
+
+\bibitem {rab}
+Rabinowitz, P.:
+On subharmonic solutions of a Hamiltonian system.
+Comm. Pure Appl. Math. 33, 609--633 (1980)
+
+\bibitem{survey}
+Corinna Vehlow, Fabian Beck, and Daniel Weiskopf. 2017. Visualizing Group Structures in Graphs: A Survey. Comput. Graph. Forum 36, 6 (September 2017), 201-225. DOI: https://doi.org/10.1111/cgf.12872
+
+\end{thebibliography}
+
+\end{document}

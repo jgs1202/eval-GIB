@@ -1,32 +1,36 @@
 <template>
-<el-container>
-  <el-header></el-header>
-  <!-- <el-main> -->
-    <div id="dataInput">
-      <div class="dataInput">
-        <el-row>
-          <el-button type="primary" v-on:click="click1">　　　　task1　　　　</el-button>
-        </el-row>
-        <el-row>
-          <el-button type="success" v-on:click="click2">　　　　task2　　　　</el-button>
-        </el-row>
-        <el-row>
-          <el-button type="warning" v-on:click="click3">　　　　task3　　　　</el-button>
-        </el-row>
-        <el-row>
-          <el-button type="danger" v-on:click="click4">　　　　task4　　　　</el-button>
-        </el-row>
-        <br><br>
-        <el-row :gutter='20' v-if='nextPage != null'>
+<div>
+  <el-container>
+    <el-header></el-header>
+    <el-main>
+      <div id="dataInput">
+        <div class="dataInput">
+          <el-row>
+            <el-button type="primary" v-on:click="click1">　　　　task1　　　　</el-button>
+          </el-row>
+          <el-row>
+            <el-button type="success" v-on:click="click2">　　　　task2　　　　</el-button>
+          </el-row>
+          <el-row>
+            <el-button type="warning" v-on:click="click3">　　　　task3　　　　</el-button>
+          </el-row>
+          <el-row>
+            <el-button type="danger" v-on:click="click4">　　　　task4　　　　</el-button>
+          </el-row>
+          <br><br>
+          <el-row :gutter='20' v-if='nextPage != null'>
             <el-col :span='10' :offset="7">
               <el-alert :closable=false :center=true title="Press enter to start experiments." type="success">
               </el-alert>
             </el-col>
-        </el-row>
+          </el-row>
+        </div>
       </div>
-    </div>
-  <!-- </el-main> -->
-</el-container>
+    </el-main>
+  </el-container>
+  <div class="sync">
+  </div>
+</div>
 </template>
 
 <script>
@@ -39,6 +43,16 @@ export default {
       age: null,
       gender: "Male",
       nextPage: null,
+    }
+  },
+  mounted: function() {
+    let that = this
+    var sync = document.getElementsByClassName('sync')
+    for (let i = 0; i < sync.length; i++) {
+      if (that.$parent.already == 1) {
+        sync[i].style.background = 'black'
+        setTimeout(that.toWhite, 2000)
+      }
     }
   },
   methods: {
@@ -73,8 +87,16 @@ export default {
           this.$parent.currentPage = this.nextPage
         }
       }
+    },
+    toWhite: function() {
+      var that =this
+      var sync = document.getElementsByClassName('sync')
+      for (let i = 0; i < sync.length; i++) {
+        if (that.$parent.already == 1) {
+          sync[i].style.background = 'white'
+        }
+      }
     }
-
   }
 }
 </script>
@@ -82,8 +104,12 @@ export default {
 <style>
 .el-row {
   margin-bottom: 20px;
-  text-align:  center;
+  text-align: center;
   margin-left: auto;
+}
+
+.el-main{
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, .5);
 }
 
 .el-button {
@@ -105,5 +131,14 @@ table {
 
 tr {
   margin-top: 10px;
+}
+
+.sync {
+  background: white;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 </style>

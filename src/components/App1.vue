@@ -59,7 +59,7 @@ export default {
       choice: [],
       dataArray: [],
       dataNum: 0,
-      dataMax: 20,
+      dataMax: 40,
       options: [],
       radio: null,
       startTime: null,
@@ -69,7 +69,7 @@ export default {
   },
   mounted: function() {
     var that = this;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < that.dataMax; i++) {
       that.dataArray.push(i)
     }
     for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -104,6 +104,7 @@ export default {
       // console.log(that.dataNum)
       if (that.dataNum == that.dataMax) {
         that.dataNum = 0
+        this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       }
       d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
@@ -210,7 +211,7 @@ export default {
           .enter().append("line")
           .attr("stroke-width", function(d) {
             // return Math.sqrt(d.value);
-            return 0.6;
+            return 0.4;
           })
         d3.selectAll("line")
           .each(function(d, i) {
@@ -254,7 +255,7 @@ export default {
 
         return d3.selectAll('rect')
           .each(function(d, i) {
-            if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
+            if (d['dx'] != that.settings.svgWigth || d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
                 .attr('x', d['x'])
@@ -438,7 +439,7 @@ export default {
             // console.log(d)
             // console.log(this)
             // console.log(that.graph.nodes[i].cx)
-            if (d['dx'] != that.settings.svgWigth && d['dy'] != that.settings.svgHeight) {
+            if (d['dx'] != that.settings.svgWigth || d['dy'] != that.settings.svgHeight) {
               var selection = d3.select(this)
                 .attr('index', i)
                 .attr('x', d['x'])
@@ -563,7 +564,7 @@ label {
 
 .links line {
   stroke: #999;
-  stroke-opacity: 0.6;
+  stroke-opacity: 1;
 }
 
 .sync {
@@ -575,8 +576,8 @@ label {
   bottom: 0;
 }
 
-.nodes circle {
+/*.nodes circle {
   stroke: #fff;
   stroke-width: 1.0px;
-}
+}*/
 </style>

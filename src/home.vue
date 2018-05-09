@@ -26,6 +26,15 @@ export default {
       userName: 'null',
       gender: 'null',
       age: null,
+      already: null,
+      set1: [],
+      num1: 0,
+      set2: [],
+      num2: 0,
+      set3: [],
+      num3: 0,
+      set4: [],
+      num4: 0,
     }
   }
 }
