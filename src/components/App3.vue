@@ -51,7 +51,7 @@ export default {
       choice: [],
       dataNum: 0,
       dataArray: [],
-      dataMax: 10,
+      dataMax: 40,
       startTime: null,
       time: null,
       answer: null,
@@ -66,7 +66,7 @@ export default {
       txt[0].firstChild.data = 'Which box does have the least inner links?'
       that.dataArray = that.$parent.set3
     } else {
-      for (let i=0; i < 40; i++) {
+      for (let i=0; i < 80; i++) {
         that.dataArray.push(i)
       }
       for (var i = that.dataArray.length - 1; i > 0; i--) {

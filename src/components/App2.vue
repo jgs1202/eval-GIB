@@ -51,7 +51,7 @@ export default {
       choice: [],
       dataNum: null,
       dataArray: [],
-      dataMax: 2,
+      dataMax: 40,
       startTime: null,
       time: null,
       answer: null,

@@ -69,16 +69,22 @@ export default {
   },
   mounted: function() {
     var that = this;
-    for (let i = 0; i < that.dataMax; i++) {
-      that.dataArray.push(i)
-    }
-    for (var i = that.dataArray.length - 1; i > 0; i--) {
-      var r = Math.floor(Math.random() * (i + 1));
-      var tmp = that.dataArray[i];
-      that.dataArray[i] = that.dataArray[r];
-      that.dataArray[r] = tmp;
-    }
     window.addEventListener('keyup', this.onClick)
+    that.dataNum = that.$parent.num1
+    if (that.$parent.num1 >= that.dataMax){
+      that.dataArray = that.$parent.set1
+    } else {
+      for (let i=0; i < 80; i++) {
+        that.dataArray.push(i)
+      }
+      for (var i = that.dataArray.length - 1; i > 0; i--) {
+        var r = Math.floor(Math.random() * (i + 1));
+        var tmp = that.dataArray[i];
+        that.dataArray[i] = that.dataArray[r];
+        that.dataArray[r] = tmp;
+      }
+      that.$parent.set1 = that.dataArray
+    }
     console.log("mounted");
     d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
