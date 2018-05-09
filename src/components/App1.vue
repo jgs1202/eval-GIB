@@ -59,7 +59,7 @@ export default {
       choice: [],
       dataArray: [],
       dataNum: 0,
-      dataMax: 40,
+      dataMax: 20,
       options: [],
       radio: null,
       startTime: null,
@@ -107,9 +107,10 @@ export default {
     restart: function() {
       var that = this;
       that.dataNum += 1
+      console.log('data number is ' + '' + that.dataNum)
       // console.log(that.dataNum)
-      if (that.dataNum == that.dataMax) {
-        that.dataNum = 0
+      if (that.dataNum % that.dataMax == 0) {
+        that.$parent.num1 = that.dataNum
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       }

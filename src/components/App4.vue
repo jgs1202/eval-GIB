@@ -50,7 +50,7 @@ export default {
       choice: [],
       dataNum: 0,
       dataArray: [],
-      dataMax: 40,
+      dataMax: 20,
       startTime: null,
       time: null,
       answer: null,
@@ -92,8 +92,8 @@ export default {
       var that = this;
       that.dataNum += 1
       console.log(that.dataNum)
-      if (that.dataNum == that.dataMax){
-        that.dataNum = 0
+      if (that.dataNum % that.dataMax == 0){
+        that.$parent.num4 = that.dataNum
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       }

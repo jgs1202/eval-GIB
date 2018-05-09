@@ -51,7 +51,7 @@ export default {
       choice: [],
       dataNum: 0,
       dataArray: [],
-      dataMax: 40,
+      dataMax: 20,
       startTime: null,
       time: null,
       answer: null,
@@ -62,8 +62,10 @@ export default {
     var that = this;
     that.dataNum = that.$parent.num3
     if (that.$parent.num3 >= that.dataMax){
-      var txt = document.getElementsByClassName('text')
-      txt[0].firstChild.data = 'Which box does have the least inner links?'
+      if (that.$parent.num3 >= that.dataMax*2){
+        var txt = document.getElementsByClassName('text')
+        txt[0].firstChild.data = 'Which box does have the least inner links?'
+      }
       that.dataArray = that.$parent.set3
     } else {
       for (let i=0; i < 80; i++) {
@@ -161,7 +163,7 @@ export default {
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.dataNum < that.dataMax) {
+          if (that.dataNum < that.dataMax*2) {
             if (that.choice[0] == that.graph.linkMax){
               that.answer = 1
             } else {

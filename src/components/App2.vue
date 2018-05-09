@@ -51,7 +51,7 @@ export default {
       choice: [],
       dataNum: null,
       dataArray: [],
-      dataMax: 40,
+      dataMax: 20,
       startTime: null,
       time: null,
       answer: null,
@@ -62,11 +62,13 @@ export default {
     var that = this;
     that.dataNum = that.$parent.num2
     if (that.$parent.num2 >= that.dataMax){
-      var txt = document.getElementsByClassName('text')
-      txt[0].firstChild.data = 'Which is the smallest box?'
+      if (that.$parent.num2 >= that.dataMax*2){
+        var txt = document.getElementsByClassName('text')
+        txt[0].firstChild.data = 'Which is the smallest box?'
+      }
       that.dataArray = that.$parent.set2
     } else {
-      for (let i=0; i < 40; i++) {
+      for (let i=0; i < 80; i++) {
         that.dataArray.push(i)
       }
       for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -161,7 +163,7 @@ export default {
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.dataNum < that.dataMax) {
+          if (that.dataNum < that.dataMax*2) {
             if (that.choice[0] == that.graph.nodeMax){
               that.answer = 1
             } else {

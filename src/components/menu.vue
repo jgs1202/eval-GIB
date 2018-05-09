@@ -63,20 +63,36 @@ export default {
       this.$parent.gender = this.gender
     },
     click1: function(event) {
-      this.nextPage = 'App1'
-      window.addEventListener('keyup', this.submit, false)
+      if (this.$parent.num1 != 80){
+        this.nextPage = 'App1'
+        window.addEventListener('keyup', this.submit, false)
+      } else {
+        swal('You have already done this course.')
+      }
     },
     click2: function(event) {
-      this.nextPage = 'App2'
-      window.addEventListener('keyup', this.submit, false)
+      if (this.$parent.num2 != 80){
+        this.nextPage = 'App2'
+        window.addEventListener('keyup', this.submit, false)
+      } else {
+        swal('You have already done this course.')
+      }
     },
     click3: function(event) {
-      this.nextPage = 'App3'
-      window.addEventListener('keyup', this.submit, false)
+      if (this.$parent.num3 != 80){
+        this.nextPage = 'App3'
+        window.addEventListener('keyup', this.submit, false)
+      } else {
+        swal('You have already done this course.')
+      }
     },
     click4: function(event) {
-      this.nextPage = 'App4'
-      window.addEventListener('keyup', this.submit, false)
+      if (this.$parent.num4 != 80){
+        this.nextPage = 'App4'
+        window.addEventListener('keyup', this.submit, false)
+      } else {
+        swal('You have already done this course.')
+      }
     },
     submit: function(event) {
       // console.log('key')
@@ -85,6 +101,7 @@ export default {
           swal("Choose a task.")
         } else {
           this.$parent.currentPage = this.nextPage
+          window.removeEventListener('keyup', this.submit)
         }
       }
     },
