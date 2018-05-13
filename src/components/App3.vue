@@ -79,7 +79,7 @@ export default {
       //   that.dataArray[i] = that.dataArray[r];
       //   that.dataArray[r] = tmp;
       // }
-      // that.$parent.set3 = that.dataArray
+      that.$parent.set3 = that.dataArray
     }
     console.log("mounted");
     d3.json("./src/data/task3/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {

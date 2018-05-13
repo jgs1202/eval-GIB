@@ -74,7 +74,7 @@ export default {
       //   that.dataArray[i] = that.dataArray[r];
       //   that.dataArray[r] = tmp;
       // }
-      // that.$parent.set4 = that.dataArray
+      that.$parent.set4 = that.dataArray
     }
     d3.json("./src/data/task4/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
