@@ -71,6 +71,9 @@ export default {
       }
     },
     click2: function(event) {
+      if (this.$parent.num2 == 60){
+        swal('タスクが変わります！\n Enterを押すと実験に進みます。')
+      }
       if (this.$parent.num2 != 120){
         this.nextPage = 'App2'
         window.addEventListener('keyup', this.submit, false)
@@ -79,6 +82,9 @@ export default {
       }
     },
     click3: function(event) {
+      if (this.$parent.num3 == 60){
+        swal('タスクが変わります！\n Enterを押すと実験に進みます。')
+      }
       if (this.$parent.num3 != 120){
         this.nextPage = 'App3'
         window.addEventListener('keyup', this.submit, false)
