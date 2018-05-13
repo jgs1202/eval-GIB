@@ -74,13 +74,13 @@ export default {
       for (let i=0; i < 120; i++) {
         that.dataArray.push(i)
       }
-      for (var i = that.dataArray.length - 1; i > 0; i--) {
-        var r = Math.floor(Math.random() * (i + 1));
-        var tmp = that.dataArray[i];
-        that.dataArray[i] = that.dataArray[r];
-        that.dataArray[r] = tmp;
-      }
-      that.$parent.set2 = that.dataArray
+      // for (var i = that.dataArray.length - 1; i > 0; i--) {
+      //   var r = Math.floor(Math.random() * (i + 1));
+      //   var tmp = that.dataArray[i];
+      //   that.dataArray[i] = that.dataArray[r];
+      //   that.dataArray[r] = tmp;
+      // }
+      // that.$parent.set2 = that.dataArray
     }
     console.log("mounted");
     d3.json("./src/data/task2/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
