@@ -63,7 +63,7 @@ export default {
     var that = this;
     that.dataNum = that.$parent.num2
     if (that.$parent.num2 >= that.dataMax){
-      if (that.$parent.num2 >= that.dataMax*1){
+      if (that.$parent.num2 >= that.dataMax*3){
         var txt = document.getElementsByClassName('text')
         // console.log(txt[0])
         txt[0].firstChild.data = 'Which is the smallest box?'
