@@ -63,7 +63,7 @@ export default {
       this.$parent.gender = this.gender
     },
     click1: function(event) {
-      if (this.$parent.num1 != 80){
+      if (this.$parent.num1 != 120){
         this.nextPage = 'App1'
         window.addEventListener('keyup', this.submit, false)
       } else {
@@ -71,7 +71,7 @@ export default {
       }
     },
     click2: function(event) {
-      if (this.$parent.num2 != 80){
+      if (this.$parent.num2 != 120){
         this.nextPage = 'App2'
         window.addEventListener('keyup', this.submit, false)
       } else {
@@ -79,7 +79,7 @@ export default {
       }
     },
     click3: function(event) {
-      if (this.$parent.num3 != 80){
+      if (this.$parent.num3 != 120){
         this.nextPage = 'App3'
         window.addEventListener('keyup', this.submit, false)
       } else {
@@ -87,7 +87,7 @@ export default {
       }
     },
     click4: function(event) {
-      if (this.$parent.num4 != 80){
+      if (this.$parent.num4 != 120){
         this.nextPage = 'App4'
         window.addEventListener('keyup', this.submit, false)
       } else {

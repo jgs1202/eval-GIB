@@ -4,7 +4,8 @@
     <el-container>
       <el-aside width='20%'>
         <div class='text'>
-          Which boxes do have inter links between themselves?<br>
+          Which box is with the most inter links?<br><br>
+          最も多くのグループ間リンクを持つBOXを選んでください。
         </div>
         <div class="controls">
           <br>
@@ -64,7 +65,7 @@ export default {
     if (that.$parent.num4 >= that.dataMax){
       that.dataArray = that.$parent.set4
     } else {
-      for (let i=0; i < 80; i++) {
+      for (let i=0; i < 120; i++) {
         that.dataArray.push(i)
       }
       for (var i = that.dataArray.length - 1; i > 0; i--) {

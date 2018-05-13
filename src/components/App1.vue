@@ -4,7 +4,8 @@
     <el-container>
       <el-aside width='20%'>
         <div class='text'>
-          How many boxes are displayed?<br>
+          How many boxes are displayed?<br><br>
+          グループの数はいくつでしょう？
         </div>
         <div class="controls">
           <br>
@@ -74,7 +75,7 @@ export default {
     if (that.$parent.num1 >= that.dataMax){
       that.dataArray = that.$parent.set1
     } else {
-      for (let i=0; i < 80; i++) {
+      for (let i=0; i < 120; i++) {
         that.dataArray.push(i)
       }
       for (var i = that.dataArray.length - 1; i > 0; i--) {
