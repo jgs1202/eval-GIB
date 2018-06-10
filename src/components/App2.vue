@@ -4,8 +4,8 @@
     <el-container>
       <el-aside width='20%'>
         <div class='text'>
-          Which is the largest box?<br><br>
-          一番大きいBOXを選んでください。
+          Which box does have the most intra-links?<br><br>
+          グループ内リングか一番多いものを選んでください。
         </div>
         <div class="controls">
           <br>
@@ -50,12 +50,13 @@ export default {
       links: [],
       boxes: [],
       choice: [],
-      dataNum: null,
+      dataNum: 0,
       dataArray: [],
       dataMax: 20,
       startTime: null,
       time: null,
       answer: null,
+      totalQue: 120,
     }
   },
   mounted: function() {
@@ -63,51 +64,39 @@ export default {
     var that = this;
     that.dataNum = that.$parent.num2
     if (that.$parent.num2 >= that.dataMax){
-      if (that.$parent.num2 >= that.dataMax*3){
-        var txt = document.getElementsByClassName('text')
-        // console.log(txt[0])
-        txt[0].firstChild.data = 'Which is the smallest box?'
-        txt[0].childNodes[3].data = '一番小さいBOXを選んでください。'
-      }
       that.dataArray = that.$parent.set2
     } else {
-      for (let i=0; i < 120; i++) {
+      for (let i=0; i < that.totalQue; i++) {
         that.dataArray.push(i)
       }
-      // for (var i = that.dataArray.length - 1; i > 0; i--) {
-      //   var r = Math.floor(Math.random() * (i + 1));
-      //   var tmp = that.dataArray[i];
-      //   that.dataArray[i] = that.dataArray[r];
-      //   that.dataArray[r] = tmp;
-      // }
       that.$parent.set2 = that.dataArray
     }
     console.log("mounted");
-    d3.json("./src/data/task2/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+    d3.json("./src/data/high/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
-      // console.log(that.graph.nodeMax)
-      console.log("json")
+      // console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      that.startTime = Date.now()
       // console.log(that.graph.nodes.length)
     })
+    that.startTime = Date.now()
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
-      console.log('num is ' + '' + this.dataNum)
+      console.log('num is ' + '' + that.dataNum)
       if (that.dataNum % that.dataMax == 0) {
-        this.$parent.num2 = that.dataNum
+        that.$parent.num2 = that.dataNum
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       } else {
-        d3.json("./src/data/task2/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+        d3.json("./src/data/high/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
           that.graph = graph
+          // console.log(that.graph.linkMax)
           that.graph.groups.pop()
           that.$set(that.nodes, that.reNodes())
           that.$set(that.links, that.reLinks())
@@ -161,27 +150,19 @@ export default {
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
           params.set('layout', that.graph.type)
-          params.set('task', 2)
+          params.set('task', 3)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.dataNum < that.dataMax*3) {
-            if (that.choice[0] == that.graph.nodeMax){
-              that.answer = 1
-            } else {
-              that.answer = 0
-            }
+          if (that.choice[0] == that.graph.linkMax){
+            that.answer = 1
           } else {
-            if (that.choice[0] == that.graph.nodeMin){
-              that.answer = 1
-            } else {
-              that.answer = 0
-            }
+            that.answer = 0
           }
           console.log('the answer is')
           console.log(that.answer)
-          // console.log( that.answer, that.graph.nodeMax, that.choice[0])
+          // console.log(that.answer, that.graph.linkMax, that.choice[0])
           params.set('answer', that.answer)
           params.set('time', that.time)
           // params.set('choice1', that.choice[1])
@@ -295,7 +276,7 @@ export default {
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
                       tmp = i
-                      // console.log(i)
+                      console.log(i)
                       break
                     }
                   }
@@ -399,7 +380,7 @@ export default {
           .enter().append("line")
           .attr("stroke-width", function(d) {
             // return Math.sqrt(d.value);
-            return Math.sqrt(1);
+            return Math.sqrt(0.6);
           })
         d3.selectAll("line")
           .each(function(d, i) {
@@ -460,12 +441,15 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(i)
+                      that.choice = [i]
                       break
                     }
                   }
@@ -536,9 +520,9 @@ export default {
     //   });
     // }
   },
-  updated: function() {
-    // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
-  }
+  // updated: function() {
+  //   // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
+  // }
 }
 </script>
 
@@ -581,19 +565,19 @@ body {
 }
 
 .text {
-  width : 80%;
+  width: 80%;
   margin: auto;
   text-align: center;
   margin-top: 20%;
   font-size: 1.3rem;
 }
 
-.el-aside{
+.el-aside {
   /* border: 1px solid #67C23A; */
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
 }
 
-.el-main{
+.el-main {
   box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
   text-align: center;
 }

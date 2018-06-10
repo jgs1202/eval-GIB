@@ -6,23 +6,17 @@
       <div id="dataInput">
         <div class="dataInput">
           <el-row>
-            <el-button type="primary" v-on:click="click1">　　　　task1　　　　</el-button>
+            <el-button type="primary" v-on:click="click1">　　　　level 1　　　　</el-button>
           </el-row>
           <el-row>
-            <el-button type="success" v-on:click="click2">　　　　task2　　　　</el-button>
-          </el-row>
-          <el-row>
-            <el-button type="warning" v-on:click="click3">　　　　task3　　　　</el-button>
-          </el-row>
-          <el-row>
-            <el-button type="danger" v-on:click="click4">　　　　task4　　　　</el-button>
+            <el-button type="success" v-on:click="click2">　　　　level 2　　　　</el-button>
           </el-row>
           <br><br>
           <el-row :gutter='20' v-if='nextPage != null'>
             <el-col :span='10' :offset="7">
               <el-alert :closable=false :center=true title="Press enter to start experiments." type="success">
               </el-alert>
-            </el-col>
+            </el-col>s
           </el-row>
         </div>
       </div>
@@ -43,6 +37,7 @@ export default {
       age: null,
       gender: "Male",
       nextPage: null,
+      each: 120,
     }
   },
   mounted: function() {
@@ -63,7 +58,7 @@ export default {
       this.$parent.gender = this.gender
     },
     click1: function(event) {
-      if (this.$parent.num1 != 120){
+      if (this.$parent.num1 != this.each){
         this.nextPage = 'App1'
         window.addEventListener('keyup', this.submit, false)
       } else {
@@ -71,30 +66,8 @@ export default {
       }
     },
     click2: function(event) {
-      if (this.$parent.num2 == 60){
-        swal('タスクが変わります！\n Enterを押すと実験に進みます。')
-      }
-      if (this.$parent.num2 != 120){
+      if (this.$parent.num2 != this.each){
         this.nextPage = 'App2'
-        window.addEventListener('keyup', this.submit, false)
-      } else {
-        swal('You have already done this course.')
-      }
-    },
-    click3: function(event) {
-      if (this.$parent.num3 == 60){
-        swal('タスクが変わります！\n Enterを押すと実験に進みます。')
-      }
-      if (this.$parent.num3 != 120){
-        this.nextPage = 'App3'
-        window.addEventListener('keyup', this.submit, false)
-      } else {
-        swal('You have already done this course.')
-      }
-    },
-    click4: function(event) {
-      if (this.$parent.num4 != 120){
-        this.nextPage = 'App4'
         window.addEventListener('keyup', this.submit, false)
       } else {
         swal('You have already done this course.')

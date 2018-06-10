@@ -4,21 +4,13 @@
     <el-container>
       <el-aside width='20%'>
         <div class='text'>
-          How many boxes are displayed?<br><br>
-          グループの数はいくつでしょう？
+          Which box does have the most intra-links?<br><br>
+          グループ内リングか一番多いものを選んでください。
         </div>
         <div class="controls">
           <br>
           <label>Adjust width</label>
           <el-slider v-model="settings.width"></el-slider>
-          <!-- <input type="range" v-model="settings.width" min="0" max="100" /> -->
-        </div>
-        <div class="question">
-          <br><br>
-          <el-radio v-model="radio" label="0" border>{{options[0]}}</el-radio>
-          <el-radio v-model="radio" label="1" border>{{options[1]}}</el-radio><br>
-          <el-radio v-model="radio" label="2" border>{{options[2]}}</el-radio>
-          <el-radio v-model="radio" label="3" border>{{options[3]}}</el-radio>
         </div>
       </el-aside>
       <el-main>
@@ -58,24 +50,23 @@ export default {
       links: [],
       boxes: [],
       choice: [],
-      dataArray: [],
       dataNum: 0,
+      dataArray: [],
       dataMax: 20,
-      options: [],
-      radio: null,
       startTime: null,
       time: null,
       answer: null,
+      totalQue: 120,
     }
   },
   mounted: function() {
-    var that = this;
     window.addEventListener('keyup', this.onClick)
+    var that = this;
     that.dataNum = that.$parent.num1
     if (that.$parent.num1 >= that.dataMax){
       that.dataArray = that.$parent.set1
     } else {
-      for (let i=0; i < 120; i++) {
+      for (let i=0; i < that.totalQue; i++) {
         that.dataArray.push(i)
       }
       // for (var i = that.dataArray.length - 1; i > 0; i--) {
@@ -87,59 +78,47 @@ export default {
       that.$parent.set1 = that.dataArray
     }
     console.log("mounted");
-    d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+    d3.json("./src/data/low/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
-      console.log("json")
+      // console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      let randint = Math.floor(Math.random() * 4)
-      let array = []
-      for (let i = 0; i < 4; i++) {
-        array.push(parseInt(that.graph.groupSize) - randint + i)
-      }
-      that.options = array
-      that.startTime = Date.now()
+      // console.log(that.graph.nodes.length)
     })
+    that.startTime = Date.now()
   },
   methods: {
     restart: function() {
       var that = this;
       that.dataNum += 1
-      console.log('data number is ' + '' + that.dataNum)
-      // console.log(that.dataNum)
+      console.log('num is ' + '' + that.dataNum)
       if (that.dataNum % that.dataMax == 0) {
         that.$parent.num1 = that.dataNum
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
-      }
-      d3.json("./src/data/task1/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
-        that.graph = graph
-        console.log('reload')
-        console.log(that.graph.links.length)
-        that.graph.groups.pop()
-        that.$set(that.nodes, that.reNodes())
-        that.$set(that.links, that.reLinks())
-        that.$set(that.boxes, that.reBoxes())
-        let randint = Math.floor(Math.random() * 4)
-        let array = []
-        for (let i = 0; i < 4; i++) {
-          array.push(parseInt(that.graph.groupSize) - randint + i)
+      } else {
+        d3.json("./src/data/low/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+          that.graph = graph
+          // console.log(that.graph.linkMax)
+          that.graph.groups.pop()
+          that.$set(that.nodes, that.reNodes())
+          that.$set(that.links, that.reLinks())
+          that.$set(that.boxes, that.reBoxes())
+        })
+        var sync = document.getElementsByClassName('sync')
+        // console.log(sync[0].style.background)
+        for(let i=0; i<sync.length; i++){
+          if ( that.dataNum % 2 == 0 ){
+            sync[i].style.background = 'black'
+          } else {
+            sync[i].style.background = 'white'
+          }
         }
-        that.options = array
-      })
-      var sync = document.getElementsByClassName('sync')
-      console.log(sync[0].style.background)
-      for(let i=0; i<sync.length; i++){
-        if ( that.dataNum % 2 == 0 ){
-          sync[i].style.background = 'black'
-        } else {
-          sync[i].style.background = 'white'
-        }
+        that.startTime = Date.now()
       }
-      that.startTime = Date.now()
     },
     reNodes: function() {
       var that = this;
@@ -170,32 +149,36 @@ export default {
       if (event.keyCode == '13') {
         var that = this
         // console.log(that.graph)
-        if (that.radio != null) {
+        if (that.choice.length == 1) {
           that.time = Date.now() - that.startTime
           const params = new URLSearchParams()
           params.set('userName', this.$parent.userName)
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
           params.set('layout', that.graph.type)
-          params.set('task', 1)
+          params.set('task', 3)
           params.set('groupSize', that.graph.groupSize)
           params.set('pgroup', that.graph.pgroup)
           params.set('pout', that.graph.pout)
           params.set('file', that.graph.file)
-          if (that.options[that.radio] == that.graph.groupSize) {
+          if (that.choice[0] == that.graph.linkMax){
             that.answer = 1
           } else {
             that.answer = 0
           }
+          console.log('the answer is')
+          console.log(that.answer)
+          // console.log(that.answer, that.graph.linkMax, that.choice[0])
           params.set('answer', that.answer)
           params.set('time', that.time)
+          // params.set('choice1', that.choice[1])
           const url = `http://127.0.0.1:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
-              console.log(res.data)
+              // console.log(res.data)
             })
-          that.radio = null
-          d3.selectAll('rect').attr('stroke-width', 1).attr('stroke', 'black')
+          that.choice = []
+          d3.selectAll('rect').attr('stroke-width', 0.6).attr('stroke', 'black')
           d3.selectAll('circle').remove()
           d3.selectAll('line').remove()
           d3.selectAll('rect').remove()
@@ -261,6 +244,59 @@ export default {
           .attr("stroke-width", 1)
           .attr("fill", 'transparent')
 
+        function func(event) {
+          // console.log(event)
+          d3.selectAll('rect')
+            .each(function(d, i) {
+              if (event.x == d.x && event.y == d.y) {
+                var selection = d3.select(this)
+                if (selection.attr('stroke') == 'black') {
+                  // selection.remove()
+                  // console.log(this.attributes.index)
+                  // d3.select("svg").append("rect")
+                  //   .attr("stroke", d3.rgb(102, 200, 255))
+                  //   .attr("stroke-width", 3)
+                  //   .attr("fill", 'transparent')
+                  //   .attr('index', this.attributes.index)
+                  //   .attr('x', this.x.animVal.value)
+                  //   .attr('y', this.y.animVal.value)
+                  //   .attr('width', this.width.animVal.value)
+                  //   .attr('height', this.height.animVal.value)
+                  //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
+                  this.parentNode.appendChild(this)
+                  selection.attr("stroke-width", 3)
+                    .attr('stroke', d3.rgb(102, 200, 255))
+                  for (let i in that.graph.groups) {
+                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
+                      that.choice = [i]
+                      break
+                    }
+                  }
+                } else if (selection.attr('stroke') == d3.rgb(102, 200, 255)) {
+                  selection.attr("stroke-width", 1)
+                    .attr('stroke', 'black')
+                  let tmp
+                  for (let i in that.graph.groups) {
+                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
+                      tmp = i
+                      console.log(i)
+                      break
+                    }
+                  }
+                  for (let i in that.choice) {
+                    if (tmp == that.choice[i]) {
+                      that.choice.splice(i, 1)
+                    }
+                  }
+                }
+              }
+            })
+          console.log(that.choice)
+        }
+
         return d3.selectAll('rect')
           .each(function(d, i) {
             if (d['dx'] != that.settings.svgWigth || d['dy'] != that.settings.svgHeight) {
@@ -270,6 +306,7 @@ export default {
                 .attr('y', d['y'])
                 .attr('width', d['dx'])
                 .attr('height', d['dy'])
+                .on('click', func)
             }
           })
       }
@@ -323,7 +360,7 @@ export default {
           .enter().append("circle")
           .attr('cx', 0)
           .attr('cy', 0)
-          .attr("r", 3)
+          .attr("r", 5)
         return d3.selectAll("circle")
           .each(function(d, i) {
             // console.log(d)
@@ -349,7 +386,7 @@ export default {
           .enter().append("line")
           .attr("stroke-width", function(d) {
             // return Math.sqrt(d.value);
-            return Math.sqrt(1);
+            return Math.sqrt(0.6);
           })
         d3.selectAll("line")
           .each(function(d, i) {
@@ -392,7 +429,7 @@ export default {
           .attr("fill", 'transparent')
 
         function func(event) {
-          // console.log(event)
+          console.log(event)
           d3.selectAll('rect')
             .each(function(d, i) {
               if (event.x == d.x && event.y == d.y) {
@@ -410,12 +447,15 @@ export default {
                   //   .attr('width', this.width.animVal.value)
                   //   .attr('height', this.height.animVal.value)
                   //   .on('click', func)
+                  d3.selectAll('rect')
+                    .attr("stroke-width", 1)
+                    .attr('stroke', 'black')
                   this.parentNode.appendChild(this)
                   selection.attr("stroke-width", 3)
                     .attr('stroke', d3.rgb(102, 200, 255))
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice.push(i)
+                      that.choice = [i]
                       break
                     }
                   }
@@ -486,9 +526,9 @@ export default {
     //   });
     // }
   },
-  updated: function() {
-    // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
-  }
+  // updated: function() {
+  //   // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
+  // }
 }
 </script>
 
@@ -508,12 +548,11 @@ body {
   font-family: 'serif';
 }
 
-
 .controls {
   text-align: center;
   width: 80%;
   margin: auto;
-  padding-bottom: 10px;
+  padding-bottom: 2rem;
   margin-top: 2rem;
   /* margin: auto; */
   background: #f8f8f8;
@@ -522,30 +561,13 @@ body {
   flex-direction: column;
 }
 
-.svg-container {
-  position: relative;
-  height: 100%;
-  /* display: table; */
-  margin: auto;
-  border: 0px solid #f8f8f8;
-  /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
-}
-
-.controls>*+* {
-  margin-top: 1rem;
-}
-
-.question {
-  margin: auto;
-  text-align: center;
-}
-
-.container {
-  text-align: center;
-}
-
-label {
-  display: block;
+.sync {
+  background: black;
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .text {
@@ -566,22 +588,24 @@ label {
   text-align: center;
 }
 
-.el-radio {
-  width: 40%;
+.svg-container {
+  margin: auto;
+  display: table;
+  border: 0px solid #f8f8f8;
+  /* box-shadow: 1px 2px 4px rgba(0, 0, 0, .5); */
+}
+
+.controls>*+* {
+  margin-top: 1rem;
+}
+
+label {
+  display: block;
 }
 
 .links line {
   stroke: #999;
   stroke-opacity: 1;
-}
-
-.sync {
-  background: black;
-  height: 60px;
-  width: 60px;
-  position: absolute;
-  right: 0;
-  bottom: 0;
 }
 
 /*.nodes circle {
