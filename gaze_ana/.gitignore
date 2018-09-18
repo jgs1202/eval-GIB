@@ -3,5 +3,6 @@ git dist/
 .DS_Store
 *.txt
 *.json
+!package.json
 *.db
 flaski/test.db

@@ -8,6 +8,7 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  // mode: 'development',
   module: {
     rules: [
       {test: /\.vue$/, loader: 'vue-loader', options: {loaders: {sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax'}}},
@@ -44,12 +45,12 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   sourceMap: true,
+    //   compress: {
+    //     warnings: false
+    //   }
+    // }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
