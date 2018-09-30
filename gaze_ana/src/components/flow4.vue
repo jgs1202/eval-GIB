@@ -58,6 +58,8 @@ export default {
       answer: null,
       trajes: [],
       traje: [],
+      flows: [],
+      flow: [],
     }
   },
   mounted: function() {
@@ -81,9 +83,10 @@ export default {
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
+      that.$set(that.flow, that.reFlow(that.dataArray[that.dataNum]))
     })
-    that.trajes = that.$parent.traje
-    that.traje = that.reTrajes()
+    // that.trajes = that.$parent.traje
+    // that.traje = that.reTrajes()
   },
   methods: {
     restart: function() {
@@ -101,6 +104,7 @@ export default {
         that.$set(that.nodes, that.reNodes())
         that.$set(that.links, that.reLinks())
         that.$set(that.boxes, that.reBoxes())
+        that.$set(that.flow, that.reFlow(that.dataArray[that.dataNum]))
       })
       var sync = document.getElementsByClassName('sync')
       console.log(sync[0].style.background)
@@ -111,7 +115,7 @@ export default {
           sync[i].style.background = 'white'
         }
       }
-      that.traje = that.reTrajes()
+      // that.traje = that.reTrajes()
     },
     reTrajes: function() {
       var that = this;

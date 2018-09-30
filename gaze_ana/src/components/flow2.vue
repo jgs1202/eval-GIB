@@ -35,6 +35,7 @@
 import axios from 'axios'
 const d3 = require('d3')
 const swal = require('sweetalert')
+const $ = require('jquery')
 export default {
   name: 'app',
   data: function() {
@@ -177,8 +178,25 @@ export default {
     reFlow: function(dataNum) {
       console.log('flow calculation')
       var that = this
+      let svg = d3.select('svg')
+      svg.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 5)
+        .attr("refY", 0)
+        .attr('markerUnits', 'strokeWidth')
+        .attr("markerWidth", 4)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+      .append('svg:path')
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr('fill', 'rgba(204,153,255,0.9)')
+
       let centers = []
       let arrows = []
+      let overlaps = []
+      let threshold = 3
+
       let max = 0
       for (let i=0; i<that.graph.groups.length - 1; i++){
         let dic = {}
@@ -187,10 +205,11 @@ export default {
         centers.push(dic)
       }
       console.log('reading')
-      d3.json('./src/flows/task1/' + '' + dataNum + '.json').then(function(graph) {
+      d3.json('./src/flows/task2/' + '' + dataNum + '.json').then(function(graph) {
+        let container = d3.select('svg')
         for (let i=0; i<graph.length; i++){
           for (let j=0; j<graph[i].length; j++){
-            if (graph[i][j] > 1.0) {
+            if ((graph[i][j] > threshold) && (i !== j)) {
               let dic = {}
               dic.src = i
               dic.target = j
@@ -202,37 +221,110 @@ export default {
             }
           }
         }
-        d3.select("svg").append("g")
-          .attr("class", "flow")
-          .selectAll("line")
-          .data(arrows)
-          .enter().append("line")
-        console.log('d3 start')
-        d3.selectAll("line")
-          .each(function(d, i) {
-            console.log(d)
-            var selection = d3.select(this)
-            console.log(selection)
-            selection.attr('x1', function(d) {
-                return (center[arrows[i].src].x - 433)/1.477
-              })
-              .attr('y1', function(d) {
-                return (center[arrows[i].src].y - 124) / 1.477
-              })
-              .attr('x2', function(d) {
-                return (center[arrows[i].target].x - 433)/1.477
-              })
-              .attr('y2', function(d) {
-                return (center[arrows[i].target].y - 124) / 1.477
-              })
-              .attr("stroke-width", function(d) {
-                return arrows[i].value / max * 10
-              })
-        })
-      console.log('d3 end')
-      obj._groups = d3.selectAll('.flow')._groups[0][0].childNodes
-      console.log(obj)
-      return obj
+        for (let i=0; i<arrows.length; i++){
+          for (let j=0; j<arrows.length; j++){
+            if ((arrows[i].src === arrows[j].target) && (arrows[j].src === arrows[i].target)){
+              if (parseInt(arrows[i].src) < parseInt(arrows[j].src)){
+                overlaps.push([parseInt(arrows[i].src), parseInt(arrows[j].src)])
+              }
+            } 
+          }
+        }
+        console.log(overlaps)
+        for (let i=0; i<arrows.length; i++){
+          let array1 = [arrows[i].src, arrows[i].target]
+          let array2 = [arrows[i].target, arrows[i].src]
+          let ver = 0
+          for (let j=0; j<overlaps.length; j++){
+            let ver1 = (array1[0] == overlaps[j][0]) && (array1[1] == overlaps[j][1])
+            let ver2 = (array2[0] == overlaps[j][0]) && (array2[1] == overlaps[j][1])
+            if (ver1 || ver2) {
+              ver = 1
+              break
+            }
+          }
+          if (ver === 0){
+            let dx = centers[arrows[i].src].x - centers[arrows[i].target].x
+            let dy = centers[arrows[i].src].y - centers[arrows[i].target].y
+            let line = container.append('line')
+              .attr('x1', centers[arrows[i].src].x - dx / 8) //- 433)/1.477)
+              .attr('x2', centers[arrows[i].target].x + dx / 8) // - 433)/1.477)
+              .attr('y1', centers[arrows[i].src].y - dy / 8) // - 124)/1.477)
+              .attr('y2', centers[arrows[i].target].y + dy / 8) // - 124)/1.477)
+              .attr('stroke', 'rgba(204,153,255,0.9)')
+              .attr('stroke-width', arrows[i].value * 1.3)
+              .attr('marker-end', 'url(#arrowhead)')
+          } else {
+            console.log('ver is ' + '' + ver)
+            let dirx = 0
+            let diry = 0
+            let comx = 0
+            let comy = 0
+            let tan = 0
+            let Source = centers[arrows[i].src]
+            let Target = centers[arrows[i].target]
+            let margin = arrows[i].value * 1.7
+            if ((Source.x > Target.x) && (Source.y > Target.y)) {
+              dirx = -1
+              diry = 1
+              comx = 1
+              comy = 1
+              // sx = -
+              // tx = +
+              // sy = -
+              // ty = +
+            } else if ((Source.x > Target.x) && (Source.y < Target.y)){
+              dirx = 1
+              diry = 1
+              comx = 1
+              comy = -1
+            } else if ((Source.x < Target.x) && (Source.y > Target.y)) {
+              dirx = -1
+              diry = -1
+              comx = -1
+              comy = 1
+            } else if ((Source.x < Target.x) && (Source.y < Target.y)) {
+              dirx = 1
+              diry = -1
+              comx = -1
+              comy = -1
+            } else if ((Source.x == Target.x) && (Source.y < Target.y)) {
+              dirx = -1
+              diry = 0
+              comx = 0
+              comy = -1
+            } else if ((Source.x == Target.x) && (Source.y > Target.y)) {
+              dirx = 1
+              diry = 0
+              comx = 0
+              comy = 1
+            } 
+            let dx = Math.abs(centers[arrows[i].src].x - centers[arrows[i].target].x)
+            let dy = Math.abs(centers[arrows[i].src].y - centers[arrows[i].target].y)
+            let cos = Math.abs(dx / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)))
+            let sin = Math.abs(dy / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)))
+            console.log(cos, sin, cos*margin)
+            let line = container.append('line')
+              .attr('x1', centers[arrows[i].src].x - comx * dx / 5 + dirx * sin * margin) //- 433)/1.477)
+              .attr('x2', centers[arrows[i].target].x + comx * dx / 5 + dirx * sin * margin) // - 433)/1.477)
+              .attr('y1', centers[arrows[i].src].y - comy * dy / 5 + diry * cos * margin) // - 124)/1.477)
+              .attr('y2', centers[arrows[i].target].y + comy * dy / 5 + diry * cos * margin) // - 124)/1.477)
+              .attr('stroke', 'rgba(204,153,255,0.9)')
+              .attr('stroke-width', arrows[i].value * 1.3)
+              .attr('marker-end', 'url(#arrowhead)')
+
+            // let line2 = container.append('line')
+            //   .attr('x1', centers[arrows[i].src].x - comx * dx / 8) //- 433)/1.477)
+            //   .attr('x2', centers[arrows[i].target].x + comx * dx / 8) // - 433)/1.477)
+            //   .attr('y1', centers[arrows[i].src].y - comy * dy / 8) // - 124)/1.477)
+            //   .attr('y2', centers[arrows[i].target].y + comy * dy / 8) // - 124)/1.477)
+            //   .attr('stroke', 'red')
+            //   .attr('stroke-width', arrows[i].value * 1)
+          }
+        }
+        console.log('d3 end')
+        obj._groups = d3.selectAll('.flow')._groups[0][0].childNodes
+        return obj
       })
     },
     onClick: function(event) {
@@ -240,41 +332,6 @@ export default {
         var that = this
         console.log('click')
         if (that.choice.length == 1) {
-          that.time = Date.now() - that.startTime
-          const params = new URLSearchParams()
-          params.set('userName', this.$parent.userName)
-          params.set('gender', this.$parent.gender)
-          params.set('age', this.$parent.age)
-          params.set('layout', that.graph.type)
-          params.set('task', 2)
-          params.set('groupSize', that.graph.groupSize)
-          params.set('pgroup', that.graph.pgroup)
-          params.set('pout', that.graph.pout)
-          params.set('file', that.graph.file)
-          if (that.dataNum < that.dataMax*3) {
-            if (that.choice[0] == that.graph.nodeMax){
-              that.answer = 1
-            } else {
-              that.answer = 0
-            }
-          } else {
-            if (that.choice[0] == that.graph.nodeMin){
-              that.answer = 1
-            } else {
-              that.answer = 0
-            }
-          }
-          console.log('the answer is')
-          console.log(that.answer)
-          // console.log( that.answer, that.graph.nodeMax, that.choice[0])
-          params.set('answer', that.answer)
-          params.set('time', that.time)
-          // params.set('choice1', that.choice[1])
-          const url = `http://127.0.0.1:5000/data/${params.toString()}`
-          axios.get(url)
-            .then(res => {
-              // console.log(res.data)
-            })
           that.choice = []
           d3.selectAll('rect').attr('stroke-width', 0.6).attr('stroke', 'black')
           d3.selectAll('circle').remove()
@@ -283,10 +340,6 @@ export default {
           // that.graph = 0
           // d3.select('svg').remove()
           that.restart()
-          // console.log('boxes')
-          // } else {
-          //   swal('Choose 1 boxes.')
-          // }
         }
       }
     },
@@ -353,18 +406,6 @@ export default {
                 console.log(this)
                 var selection = d3.select(this)
                 if (selection.attr('stroke') == 'black') {
-                  // selection.remove()
-                  // console.log(this.attributes.index)
-                  // d3.select("svg").append("rect")
-                  //   .attr("stroke", d3.rgb(102, 200, 255))
-                  //   .attr("stroke-width", 3)
-                  //   .attr("fill", 'transparent')
-                  //   .attr('index', this.attributes.index)
-                  //   .attr('x', this.x.animVal.value)
-                  //   .attr('y', this.y.animVal.value)
-                  //   .attr('width', this.width.animVal.value)
-                  //   .attr('height', this.height.animVal.value)
-                  //   .on('click', func)
                   d3.selectAll('rect')
                     .attr("stroke-width", 1)
                     .attr('stroke', 'black')

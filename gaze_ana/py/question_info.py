@@ -20,6 +20,7 @@ def main():
         que = int(datum['file'][:-5])
         out[task][que]['correct'] += int(datum['answer'])
         out[task][que]['time'].append(int(datum['time']))
+        out[task][que]['layout'] = datum['layout']
     for i in range(4):
         for j in range(120):
             # print(out[i][j]['correct'])

@@ -12,9 +12,9 @@ import pandas.tools.plotting as plotting
 
 
 def calcFlow(trajes, abst):
-    matrixes = [[[] for j in range(30)] for i in range(4)]
+    matrixes = [[[] for j in range(120)] for i in range(4)]
     for task in range(4):
-        for que in range(30):
+        for que in range(120):
             total = 0
             groupSize = abst[task][que]['groupSize']
             matrix = np.zeros((groupSize, groupSize))
@@ -22,6 +22,8 @@ def calcFlow(trajes, abst):
                 for flow in range(len(trajes[task][que][member]) - 1):
                     src = trajes[task][que][member][flow]['AOI']
                     target = trajes[task][que][member][flow + 1]['AOI']
+                    # if int(src) == int(target):
+                    #     print('same points')
                     matrix[int(src) - 1][int(target) - 1] += 1
                     total += 1
             matrix = matrix / total * 100
@@ -39,6 +41,7 @@ def makefile():
     data = json.load(open('../src/trajectory/fixations.json'))
     abst_data = json.load(open('../src/trajectory/abst_info.json'))
     matrixes = calcFlow(data, abst_data)
+    print(len(matrixes[0]))
 
     for task in range(len(matrixes)):
         for matrix in range(len(matrixes[task])):

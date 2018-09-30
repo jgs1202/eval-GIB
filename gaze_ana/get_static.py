@@ -2,27 +2,37 @@ import json
 from statistics import mean, stdev
 from scipy.stats import f_oneway
 
+
 def read():
-	data = json.load(open('flaski/choice.json'))
-	return data
+    data = json.load(open('flaski/choice.json'))
+    return data
+
 
 def output(data):
-    names = ['Chaturvedi', 'FDGIB', 'STGIB', 'TRGIB']
-    list = [ [{ "answer": [], "time":[]} for i in range(4)] for j in range(4)]
+    names = ['STGIB', 'Chaturvedi', 'FDGIB', 'TRGIB']
+    list = [[{"answer": [], "time":[]} for i in range(4)] for j in range(4)]
     for datum in data:
         if datum['layout'] == 'Chatu':
-            list[int(datum['task'])-1][0]['answer'].append(int(datum['answer']))
-            list[int(datum['task'])-1][0]['time'].append(float(datum['time'])) 
-        elif datum['layout'] == 'FDGIB':
             list[int(datum['task'])-1][1]['answer'].append(int(datum['answer']))
             list[int(datum['task'])-1][1]['time'].append(float(datum['time']))
-        elif datum['layout'] == 'STGIB':
+            list[int(datum['task'])-1][1]['layout'] = 'Chatu'
+        elif datum['layout'] == 'FDGIB':
             list[int(datum['task'])-1][2]['answer'].append(int(datum['answer']))
             list[int(datum['task'])-1][2]['time'].append(float(datum['time']))
+            list[int(datum['task'])-1][2]['layout'] = 'FDGIB'
+        elif datum['layout'] == 'STGIB':
+            list[int(datum['task'])-1][0]['answer'].append(int(datum['answer']))
+            list[int(datum['task'])-1][0]['time'].append(float(datum['time']))
+            list[int(datum['task'])-1][0]['layout'] = 'STGIB'
         elif datum['layout'] == 'TRGIB':
             list[int(datum['task'])-1][3]['answer'].append(int(datum['answer']))
             list[int(datum['task'])-1][3]['time'].append(float(datum['time']))
-    outputs= [ [{} for i in range(4)] for j in range(4)]
+            list[int(datum['task'])-1][3]['layout'] = 'TRGIB'
+    f = open('./flaski/answers.json', 'w')
+    json.dump(list, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
+    f.close()
+
+    outputs = [[{} for i in range(4)] for j in range(4)]
     for task in range(4):
         for layout in range(4):
             try:

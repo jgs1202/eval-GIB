@@ -260,10 +260,6 @@ export default {
           // that.graph = 0
           // d3.select('svg').remove()
           that.restart()
-          // console.log('boxes')
-          // } else {
-          //   swal('Choose 1 boxes.')
-          // }
       }
     },
     reLinks: function() {

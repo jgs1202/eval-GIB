@@ -19,7 +19,7 @@
       <g id="nodes">{{nodes}}</g>
       <g id="links">{{links}}</g>
       <g id='boxes'>{{boxes}}</g>
-      <g id='traje'>{{traje}}</g>
+      <g id='flow'>{{flow}}</g>
     </svg>
         </div>
       </el-main>
@@ -59,6 +59,8 @@ export default {
       answer: null,
       trajes: [],
       traje: [],
+      flows: [],
+      flow: [],
     }
   },
   mounted: function() {
@@ -86,9 +88,10 @@ export default {
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
+      that.$set(that.flow, that.reFlow(that.dataArray[that.dataNum]))
     })
-    that.trajes = that.$parent.traje
-    that.traje = that.reTrajes()
+    // that.trajes = that.$parent.traje
+    // that.traje = that.reTrajes()
   },
   methods: {
     restart: function() {
@@ -106,7 +109,10 @@ export default {
           that.graph.groups.pop()
           that.$set(that.nodes, that.reNodes())
           that.$set(that.links, that.reLinks())
+          console.log('link end')
           that.$set(that.boxes, that.reBoxes())
+          console.log('box end')
+          that.$set(that.flow, that.reFlow(that.dataArray[that.dataNum]))
         })
         var sync = document.getElementsByClassName('sync')
         // console.log(sync[0].style.background)
@@ -117,7 +123,7 @@ export default {
             sync[i].style.background = 'white'
           }
         }
-        that.traje = that.reTrajes()
+        // that.traje = that.reTrajes()
       }
     },
     reTrajes: function() {
@@ -154,6 +160,158 @@ export default {
       var obj = {}
       obj._groups = d3.selectAll('.traje')._groups[0][0].childNodes
       return obj
+    },
+    reFlow: function(dataNum) {
+      console.log('flow calculation')
+      var that = this
+      let svg = d3.select('svg')
+      svg.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 5)
+        .attr("refY", 0)
+        .attr('markerUnits', 'strokeWidth')
+        .attr("markerWidth", 3)
+        .attr("markerHeight", 3)
+        .attr("orient", "auto")
+      .append('svg:path')
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr('fill', 'rgba(204,153,255,0.9)')
+
+      let centers = []
+      let arrows = []
+      let overlaps = []
+      let threshold = 5
+
+      let max = 0
+      for (let i=0; i<that.graph.groups.length - 1; i++){
+        let dic = {}
+        dic.x = that.graph.groups[i].x + that.graph.groups[i].dx / 2
+        dic.y = that.graph.groups[i].y + that.graph.groups[i].dy / 2
+        centers.push(dic)
+      }
+      console.log('reading')
+      d3.json('./src/flows/task3/' + '' + dataNum + '.json').then(function(graph) {
+        let container = d3.select('svg')
+        for (let i=0; i<graph.length; i++){
+          for (let j=0; j<graph[i].length; j++){
+            if ((graph[i][j] > threshold) && (i !== j)) {
+              let dic = {}
+              dic.src = i
+              dic.target = j
+              dic.value = graph[i][j]
+              arrows.push(dic)
+              if (dic.value > max){
+                max = dic.value
+              }
+            }
+          }
+        }
+        for (let i=0; i<arrows.length; i++){
+          for (let j=0; j<arrows.length; j++){
+            if ((arrows[i].src === arrows[j].target) && (arrows[j].src === arrows[i].target)){
+              if (parseInt(arrows[i].src) < parseInt(arrows[j].src)){
+                overlaps.push([parseInt(arrows[i].src), parseInt(arrows[j].src)])
+              }
+            } 
+          }
+        }
+        console.log(overlaps)
+        for (let i=0; i<arrows.length; i++){
+          let array1 = [arrows[i].src, arrows[i].target]
+          let array2 = [arrows[i].target, arrows[i].src]
+          let ver = 0
+          for (let j=0; j<overlaps.length; j++){
+            let ver1 = (array1[0] == overlaps[j][0]) && (array1[1] == overlaps[j][1])
+            let ver2 = (array2[0] == overlaps[j][0]) && (array2[1] == overlaps[j][1])
+            if (ver1 || ver2) {
+              ver = 1
+              break
+            }
+          }
+          if (ver === 0){
+            let dx = centers[arrows[i].src].x - centers[arrows[i].target].x
+            let dy = centers[arrows[i].src].y - centers[arrows[i].target].y
+            let line = container.append('line')
+              .attr('x1', centers[arrows[i].src].x - dx / 8) //- 433)/1.477)
+              .attr('x2', centers[arrows[i].target].x + dx / 8) // - 433)/1.477)
+              .attr('y1', centers[arrows[i].src].y - dy / 8) // - 124)/1.477)
+              .attr('y2', centers[arrows[i].target].y + dy / 8) // - 124)/1.477)
+              .attr('stroke', 'rgba(204,153,255,0.9)')
+              .attr('stroke-width', arrows[i].value * 1.3)
+              .attr('marker-end', 'url(#arrowhead)')
+          } else {
+            console.log('ver is ' + '' + ver)
+            let dirx = 0
+            let diry = 0
+            let comx = 0
+            let comy = 0
+            let tan = 0
+            let Source = centers[arrows[i].src]
+            let Target = centers[arrows[i].target]
+            let margin = arrows[i].value * 1.7
+            if ((Source.x > Target.x) && (Source.y > Target.y)) {
+              dirx = -1
+              diry = 1
+              comx = 1
+              comy = 1
+              // sx = -
+              // tx = +
+              // sy = -
+              // ty = +
+            } else if ((Source.x > Target.x) && (Source.y < Target.y)){
+              dirx = 1
+              diry = 1
+              comx = 1
+              comy = -1
+            } else if ((Source.x < Target.x) && (Source.y > Target.y)) {
+              dirx = -1
+              diry = -1
+              comx = -1
+              comy = 1
+            } else if ((Source.x < Target.x) && (Source.y < Target.y)) {
+              dirx = 1
+              diry = -1
+              comx = -1
+              comy = -1
+            } else if ((Source.x == Target.x) && (Source.y < Target.y)) {
+              dirx = -1
+              diry = 0
+              comx = 0
+              comy = -1
+            } else if ((Source.x == Target.x) && (Source.y > Target.y)) {
+              dirx = 1
+              diry = 0
+              comx = 0
+              comy = 1
+            } 
+            let dx = Math.abs(centers[arrows[i].src].x - centers[arrows[i].target].x)
+            let dy = Math.abs(centers[arrows[i].src].y - centers[arrows[i].target].y)
+            let cos = Math.abs(dx / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)))
+            let sin = Math.abs(dy / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)))
+            console.log(cos, sin, cos*margin)
+            let line = container.append('line')
+              .attr('x1', centers[arrows[i].src].x - comx * dx / 5 + dirx * sin * margin) //- 433)/1.477)
+              .attr('x2', centers[arrows[i].target].x + comx * dx / 5 + dirx * sin * margin) // - 433)/1.477)
+              .attr('y1', centers[arrows[i].src].y - comy * dy / 5 + diry * cos * margin) // - 124)/1.477)
+              .attr('y2', centers[arrows[i].target].y + comy * dy / 5 + diry * cos * margin) // - 124)/1.477)
+              .attr('stroke', 'rgba(204,153,255,0.9)')
+              .attr('stroke-width', arrows[i].value * 1.3)
+              .attr('marker-end', 'url(#arrowhead)')
+
+            // let line2 = container.append('line')
+            //   .attr('x1', centers[arrows[i].src].x - comx * dx / 8) //- 433)/1.477)
+            //   .attr('x2', centers[arrows[i].target].x + comx * dx / 8) // - 433)/1.477)
+            //   .attr('y1', centers[arrows[i].src].y - comy * dy / 8) // - 124)/1.477)
+            //   .attr('y2', centers[arrows[i].target].y + comy * dy / 8) // - 124)/1.477)
+            //   .attr('stroke', 'red')
+            //   .attr('stroke-width', arrows[i].value * 1)
+          }
+        }
+        console.log('d3 end')
+        obj._groups = d3.selectAll('.flow')._groups[0][0].childNodes
+        return obj
+      })
     },
     reNodes: function() {
       var that = this;

@@ -7,6 +7,7 @@
         <div class="dataInput">
           <el-button v-on:click='analysisWay="App"'>Trajectory</el-button>
           <el-button v-on:click='analysisWay="flow"'>Flow</el-button><br><br>
+          <el-button v-on:click='download'>download</el-button><br><br>
           <span>Next Page: {{analysisWay}}</span><br><br>
           <el-row>
             <el-button type="primary" v-on:click="click1">　　　　task1　　　　</el-button>
@@ -38,6 +39,7 @@
 
 <script>
 const swal = require('sweetalert')
+const d3 = require('d3')
 export default {
   name: 'dataInput',
   data: function() {
@@ -60,6 +62,14 @@ export default {
     }
   },
   methods: {
+    download: function(event) {
+      let that = this
+      d3.json("./src/trajectory/data.json").
+        then(function(data) {
+          that.$parent.traje = data
+          that.$parent.currentPage = 'Menu'
+      }) 
+    },
     send: function(event) {
       this.$parent.currentPage = 'Menu'
       this.$parent.userName = this.userName

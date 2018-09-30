@@ -49,11 +49,12 @@ export default {
   },
   mounted: function(){
     var that = this
-    d3.json("./src/trajectory/data.json").
-      then(function(data) {
-        that.traje = data
-        that.currentPage = 'Menu'
-    })
+    that.currentPage = 'Menu'
+    // d3.json("./src/trajectory/data.json").
+    //   then(function(data) {
+    //     that.traje = data
+    //     that.currentPage = 'Menu'
+    // })
   },
 }
 </script>
