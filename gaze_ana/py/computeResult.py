@@ -1,5 +1,6 @@
 import json
 import math
+import matplotlib
 from statistics import mean, stdev
 from scipy.stats import f_oneway, friedmanchisquare, shapiro, wilcoxon
 import matplotlib.pyplot as plt
@@ -40,8 +41,13 @@ def box_graph(data, title):
     for box, color in zip(bp["boxes"], sns.color_palette("Set3",6)):
         box.set_facecolor(color)
     ax.set_xticklabels(['ST-GIB', 'CD-GIB', 'FD-GIB', 'TR-GIB'])
-    plt.xlabel('layout')
-    plt.ylabel(title)
+    # plt.xlabel('layout', fontsize=20)
+    # plt.ylabel(title, fontsize=20)
+    # font = {'family' : 'normal',
+    #     'weight' : 'bold',
+    #     'size'   : 64}
+
+    # matplotlib.rc('font', **font)
     # plt.ylabel('completion time [ms]')
     if title == 'Screen Space Efficiency':
         plt.ylim(0, 110)

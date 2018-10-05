@@ -606,7 +606,7 @@ label {
 }
 
 .traje line {
-  stroke: #EF75A5;
+  stroke: rgba(239,117,165, 0.7);
   stroke-width: 0.8;
 }
 
