@@ -19,6 +19,7 @@ def verify_layout(layout):
 
 
 def main():
+    data = json.load(open('../flaski/answers.json'))
     rowdata = json.load(open('../src/trajectory/row_metrics.json'))
     data = [[[] for j in range(4)] for i in range(4)]
     for i in range(len(rowdata)):
