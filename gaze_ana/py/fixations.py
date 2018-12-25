@@ -7,7 +7,7 @@ import json
 
 def makefile():
     data = [[[] for j in range(120)] for i in range(4)]
-    origin = '../src/Analyze/'
+    origin = '../src/eyeGIBresult/'
     outpath = '../src/trajectory/'
 
     for who in os.listdir(origin):
@@ -24,10 +24,11 @@ def makefile():
                             dic = {}
                             dic['AOI'], dic['duration'] = datum[i][1], datum[i][4]
                             dic['x'], dic['y'] = datum[i][2], datum[i][3]
+
                             list.append(dic)
                         data[int(task[-1]) - 1][file].append(list)
     # print(len(data[0]), len(data[0][0]), len(data[1][0][1]))
-    f = open(outpath + 'fixations.json', 'w')
+    f = open(outpath + 'gazeData.json', 'w')
     json.dump(data, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
 
 

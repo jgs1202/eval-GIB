@@ -15,6 +15,11 @@ import flow1 from './components/flow1.vue'
 import flow2 from './components/flow2.vue'
 import flow3 from './components/flow3.vue'
 import flow4 from './components/flow4.vue'
+import hist1 from './components/hist1.vue'
+import hist2 from './components/hist2.vue'
+import hist3 from './components/hist3.vue'
+import hist4 from './components/hist4.vue'
+import scarf from './components/scarf.vue'
 import Menu from './components/menu.vue'
 import dataInput from './components/dataInput.vue'
 Vue.component('dataInput', dataInput)
@@ -26,7 +31,12 @@ Vue.component('flow1', flow1)
 Vue.component('flow2', flow2)
 Vue.component('flow3', flow3)
 Vue.component('flow4', flow4)
+Vue.component('hist1', hist1)
+Vue.component('hist2', hist2)
+Vue.component('hist3', hist3)
+Vue.component('hist4', hist4)
 Vue.component('Menu', Menu)
+Vue.component('scarf', scarf)
 export default {
   name: 'home',
   data: function() {
@@ -45,6 +55,8 @@ export default {
       set4: [],
       num4: 0,
       traje: null,
+      timeSeriese: null,
+      abstData: null,
     }
   },
   mounted: function(){

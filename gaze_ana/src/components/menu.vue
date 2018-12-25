@@ -6,9 +6,13 @@
       <div id="dataInput">
         <div class="dataInput">
           <el-button v-on:click='analysisWay="App"'>Trajectory</el-button>
-          <el-button v-on:click='analysisWay="flow"'>Flow</el-button><br><br>
-          <el-button v-on:click='download'>download</el-button><br><br>
+          <el-button v-on:click='analysisWay="flow"'>Flow</el-button>
+          <el-button v-on:click='analysisWay="hist"'>Histogram</el-button><br><br>
+          <el-button v-on:click='downloadFlow'>Download flow data</el-button><br><br>
+          <el-button v-on:click='downloadTime'>Download time seriese data</el-button><br><br>
+          <span>{{message}}</span><br>
           <span>Next Page: {{analysisWay}}</span><br><br>
+          <el-button type="primary" v-on:click="scarf">　　 　　scarf   　　　</el-button><br><br>
           <el-row>
             <el-button type="primary" v-on:click="click1">　　　　task1　　　　</el-button>
           </el-row>
@@ -48,7 +52,8 @@ export default {
       age: null,
       gender: "Male",
       nextPage: null,
-      analysisWay: 'flow'
+      analysisWay: 'hist',
+      message: null,
     }
   },
   mounted: function() {
@@ -62,19 +67,36 @@ export default {
     }
   },
   methods: {
-    download: function(event) {
+    downloadFlow: function(event) {
       let that = this
       d3.json("./src/trajectory/data.json").
         then(function(data) {
           that.$parent.traje = data
           that.$parent.currentPage = 'Menu'
-      }) 
+      })
+    },
+    downloadTime: function(event) {
+      let that = this
+      that.message = 'loading....'
+      d3.json("./src/trajectory/TimeSeriesePlotData.json").
+        then(function(data) {
+          that.$parent.timeSeriese = data
+          that.$parent.currentPage = 'Menu'
+          d3.json('./src/trajectory/perQuestion.json').then(function(data2) {
+            that.$parent.abstData = data2
+            that.message = null
+          })
+      })
     },
     send: function(event) {
       this.$parent.currentPage = 'Menu'
       this.$parent.userName = this.userName
       this.$parent.age = this.Age
       this.$parent.gender = this.gender
+    },
+    scarf: function(event) {
+      this.nextPage = 'scarf'
+      window.addEventListener('keyup', this.submit, false)
     },
     click1: function(event) {
       if (this.$parent.num1 != 120){
